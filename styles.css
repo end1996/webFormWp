@@ -175,66 +175,66 @@ body {
     resize: none;
   }
   
-  /* Frame picker styles */
-  .frame-ios-picker-container {
-    position: relative;
-    height: 120px;
-    overflow: hidden;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    margin-top: 10px;
-    background-color: #f8f9fa;
-    display: none;
-  }
-  
-  .frame-ios-picker {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    padding: 40px 0;
-  }
-  
-  .frame-ios-picker::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .frame-ios-picker-item {
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .frame-ios-picker-item.selected {
-    background-color: rgba(231, 111, 81, 0.1);
-  }
-  
-  .frame-ios-picker-highlight {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 40px;
-    margin-top: -20px;
-    pointer-events: none;
-    box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
-    background-color: rgba(255, 255, 255, 0.7);
-  }
-  
-  .frame-thumbnail {
-    width: 90px;
-    height: 30px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+/* Frame picker styles */
+.frame-ios-picker-container {
+  position: relative;
+  height: 130px;
+  overflow: hidden;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-top: 10px;
+  background-color: #f8f9fa;
+  display: none;
+}
+
+.frame-ios-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding: 40px 0;
+}
+
+.frame-ios-picker::-webkit-scrollbar {
+  display: none;
+}
+
+.frame-ios-picker-item {
+  height: 50px;
+  line-height: 40px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frame-ios-picker-item.selected {
+  background-color: rgba(231, 111, 81, 0.1);
+}
+
+.frame-ios-picker-highlight {
+  position: absolute;
+  top: 45%;
+  left: 0;
+  right: 0;
+  height: 50px;
+  margin-top: -20px;
+  pointer-events: none;
+  box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.frame-thumbnail {
+  width: 90px;
+  height: 50px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
   
   .submit-btn {
     background-color: #e76f51;

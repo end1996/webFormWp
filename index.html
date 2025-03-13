@@ -9,7 +9,7 @@
 
 <body>
     <h1>Imagen para imprimir</h1>
-    <div class="upload-area">
+    <div class="upload-area" draggable="true">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e76f51" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -17,7 +17,8 @@
             <polyline points="21 15 16 10 5 21" />
         </svg>
         <p>Arrastra tu imagen aquí o</p>
-        <button class="upload-btn">Subir imagen</button>
+        <button class="upload-btn" onclick="triggerFileInput()">Subir imagen</button>
+        <input type="file" id="file-input" style="display: none;" />
     </div>
 
     <div class="section">

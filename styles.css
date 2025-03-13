@@ -63,7 +63,7 @@ body {
   .section-title svg {
     margin-right: 8px;
   }
-  
+
   .radio-group {
     display: flex;
     gap: 10px;
@@ -92,6 +92,7 @@ body {
     text-align: center;
     border: 1px solid #dee2e6;
     border-radius: 4px;
+    margin-left: 15px;
   }
   
   /* iOS-style picker for sizes */

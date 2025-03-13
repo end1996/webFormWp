@@ -103,6 +103,9 @@ body {
     border-radius: 8px;
     margin-top: 10px;
     background-color: #f8f9fa;
+    width: 105%; /* Establecer un ancho fijo o relativo */
+    margin-left: auto; /* Centrar el contenedor horizontalmente */
+    margin-right: auto;
   }
   
   .ios-picker {
@@ -290,6 +293,9 @@ body {
   
     .ios-picker-container {
       height: 150px;
+      width: 90%; /* Ajustar el ancho para pantallas medianas */
+      margin-left: auto; /* Centrar el contenedor horizontalmente */
+      margin-right: auto;
     }
   
     .ios-picker-item {
@@ -348,6 +354,9 @@ body {
   
     .ios-picker-container {
       height: 120px;
+      width: 100%;
+      margin-left: auto; /* Centrar el contenedor horizontalmente */
+      margin-right: auto; /* Ajustar el ancho para pantallas pequeñas */
     }
   
     .ios-picker-item {

@@ -20,6 +20,15 @@ function initializeIOSPicker(pickerId) {
     highlightVisibleItem(picker, pickerItems);
   });
 
+  // evento para el clic en la lista de elementos
+  pickerItems.forEach(item => {
+    item.addEventListener('click', function () {
+      pickerItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      item.scrollIntoView({ block: 'center' });
+    });
+  });
+
   // Simulate initial scroll to center the first item
   setTimeout(function () {
     if (pickerItems.length > 0) {

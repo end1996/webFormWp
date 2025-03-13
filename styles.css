@@ -320,6 +320,11 @@ body {
       padding: 10px;
       font-size: 0.875rem;
     }
+
+    .comment-area {
+      min-height: 120px;
+      padding: 15px 0 15px 0;/* Ajustar espacio al lado derecho para pantallas más pequeñas */
+    }
   }
   
   @media (max-width: 480px) {
@@ -372,5 +377,9 @@ body {
     .submit-btn {
       padding: 8px;
       font-size: 12px;
+    }
+    .comment-area {
+      min-height: 100px;
+      padding: 10px 0 10px 0;/* Ajustar espacio al lado derecho para pantallas más pequeñas */
     }
   }  

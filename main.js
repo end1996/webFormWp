@@ -69,16 +69,15 @@ function toggleFrameOptions(show) {
   document.getElementById('frame-picker-container').style.display = show ? 'block' : 'none';
 }
 
-function SubirImagen() {
+function uploadImage() {
   // Función para abrir el diálogo de selección de archivo
-  const triggerFileInput = () => {
+  window.triggerFileInput = () => {
     const fileInput = document.getElementById('file-input');
     fileInput.click(); // Simula un clic en el input de archivo
   };
 
   // Función para manejar el cambio de imagen
-  const handleImageChange = (event) => {
-    const file = event.target.files?.[0]; // Obtener el archivo seleccionado
+  const handleImageChange = (file) => {
     if (file) {
       const reader = new FileReader(); // Crear un FileReader para leer el archivo
       reader.onloadend = () => {
@@ -90,14 +89,43 @@ function SubirImagen() {
     }
   };
 
+  // Función para manejar el evento "drop"
+  const handleDrop = (event) => {
+    event.preventDefault(); // Evitar el comportamiento por defecto del navegador
+    const file = event.dataTransfer.files[0]; // Obtener el archivo arrastrado
+    handleImageChange(file); // Procesar el archivo
+    uploadArea.classList.remove('dragover'); // Quitar la clase de estilo "dragover"
+  };
+
   // Asignar eventos
   document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
+    const uploadArea = document.querySelector('.upload-area');
+
     if (fileInput) {
-      fileInput.addEventListener('change', handleImageChange); // Escuchar cambios en el input de archivo
+      fileInput.addEventListener('change', (event) => {
+        const file = event.target.files?.[0]; // Obtener el archivo seleccionado
+        handleImageChange(file); // Procesar el archivo
+      });
+    }
+
+    if (uploadArea) {
+      // Evento para cuando el archivo está siendo arrastrado sobre el área
+      uploadArea.addEventListener('dragover', (event) => {
+        event.preventDefault(); // Evitar el comportamiento por defecto
+        uploadArea.classList.add('dragover'); // Añadir clase para estilos visuales
+      });
+
+      // Evento para cuando el archivo sale del área
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover'); // Quitar clase de estilo
+      });
+
+      // Evento para cuando el archivo se suelta en el área
+      uploadArea.addEventListener('drop', handleDrop);
     }
   });
 }
 
 // Llamar a la función para inicializar
-SubirImagen();
+uploadImage();

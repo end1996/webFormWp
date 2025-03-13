@@ -8,7 +8,7 @@ body {
   }
   
   h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
     text-align: center;
     color: #2a9d8f;
     margin-bottom: 30px;
@@ -27,6 +27,11 @@ body {
   .upload-area:hover {
     background-color: #f8f9fa;
   }
+
+  .upload-area.dragover {
+    border-color: #2a9d8f; /* Cambia el color del borde cuando se arrastra un archivo */
+    background-color: #f0f0f0; /* Cambia el fondo para resaltar */
+}
   
   .upload-btn {
     background-color: #e76f51;
@@ -34,7 +39,7 @@ body {
     border: none;
     padding: 10px 24px;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -50,7 +55,7 @@ body {
   .section-title {
     display: flex;
     align-items: center;
-    font-size: 18px;
+    font-size: 1.125rem;
     color: #2a9d8f;
     margin-bottom: 10px;
   }
@@ -119,7 +124,7 @@ body {
     height: 30px;
     line-height: 50px;
     text-align: center;
-    font-size: 16px;
+    font-size: 1rem;
     color: #333;
   }
   
@@ -240,3 +245,11 @@ body {
   .submit-btn:hover {
     background-color: #e85d3e;
   }
+
+@media (max-width: 600px) {
+
+  .upload-area {
+    width: auto;
+    padding: 20px 20px;
+  }
+}

@@ -57,6 +57,19 @@ function highlightVisibleItem(picker, items) {
     }
   });
 
+  // Ajusta la sombra al centro del item más cercano
+  const pickerHighlight = picker.querySelector('.ios-picker-highlight');
+  if (pickerHighlight && closestItem) {
+    const closestItemRect = closestItem.getBoundingClientRect();
+    const itemMiddle = closestItemRect.top + closestItemRect.height / 2;
+
+    // Posiciona la sombra en el centro del item más cercano
+    pickerHighlight.style.top = itemMiddle - pickerRect.top - (pickerHighlight.offsetHeight / 2) + 'px';
+
+    // Ajusta el tamaño de la sombra para que coincida con el tamaño del item
+    pickerHighlight.style.height = closestItemRect.height + 'px';
+  }
+
   // Highlight the closest item
   if (closestItem) {
     items.forEach(item => item.classList.remove('selected'));
@@ -138,3 +151,33 @@ function uploadImage() {
 
 // Llamar a la función para inicializar
 uploadImage();
+
+// Funcionalidad Carrito
+
+document.getElementById("add-to-cart-btn").addEventListener("click", function () {
+  let cantidad = document.querySelector(".quantity-field input").value;
+  let size = document.querySelector(".ios-picker-item.selected")?.dataset.value || "10X15";
+  let marco = document.querySelector("input[name='frame']:checked").nextSibling.textContent.trim();
+  let comentarios = document.querySelector(".comment-area").value;
+
+  let formData = new FormData();
+  formData.append("action", "agregar_producto_personalizado");
+  formData.append("cantidad", cantidad);
+  formData.append("size", size);
+  formData.append("marco", marco);
+  formData.append("comentarios", comentarios);
+
+  fetch(ajaxurl, {
+      method: "POST",
+      body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          alert("Producto añadido al carrito.");
+          window.location.href = "/carrito/"; // Redirigir al carrito
+      } else {
+          alert("Hubo un error al agregar el producto.");
+      }
+  });
+});

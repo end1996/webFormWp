@@ -47,6 +47,37 @@ body {
   .upload-btn:hover {
     background-color: #e85d3e;
   }
+
+  .image-container {
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  #uploaded-image {
+    max-width: 100%;
+    display: none; /* Ocultar la imagen por defecto */
+    object-fit: cover; /* Cambia el valor de object-fit según tus necesidades */
+  }
+
+  /* Estilo para el botón de eliminar imagen */
+.remove-image-btn {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.remove-image-btn:hover {
+  background-color: #d32f2f;
+}
   
   .section {
     margin-bottom: 20px;

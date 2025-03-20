@@ -19,7 +19,9 @@
         <p>Arrastra tu imagen aquí o</p>
         <button class="upload-btn" onclick="triggerFileInput()">Subir imagen</button>
         <input type="file" id="file-input" style="display: none;" />
-        <img src="" alt="Imagen seleccionada" style="max-width: 100%; display: none;" />
+        <div class="image-container">
+          <img id="uploaded-image" src="" alt="Imagen seleccionada" style="max-width: 100%; display: none;" />
+        </div>
     </div>
 
     <div class="section">

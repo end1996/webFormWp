@@ -178,26 +178,31 @@ body {
 /* Frame picker styles */
 .frame-ios-picker-container {
   position: relative;
-  height: 180px; 
+  height: 170px;
   overflow: hidden;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   margin-top: 25px;
   background-color: #f8f9fa;
   display: none;
- 
+  width: 450px;
+  margin: 31px auto;
+
 }
 
 .frame-ios-picker {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0px;
+  left: 0px;
+  right: 0px;
   bottom: 0;
-  overflow-y: scroll;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 42px 0; 
+  padding: 38px; 
+  display: flex; 
+  scroll-snap-type: x mandatory;
 
+ 
 }
 
 .frame-ios-picker::-webkit-scrollbar {
@@ -206,11 +211,13 @@ body {
 
 .frame-ios-picker-item {
   height: 100px; 
-  line-height: 80px; 
+  line-height: 100px; 
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 100px; 
+  scroll-snap-align: center;
 }
 
 .frame-ios-picker-item.selected {
@@ -228,15 +235,41 @@ body {
   box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
   background-color: rgba(255, 255, 255, 0.7);
   scroll-snap-type: y mandatory;
+
 }
 
 .frame-thumbnail {
-  width: 90px;
+  width: 350px;
   height: 70px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+/* Estilo de las flechas de navegación */
+.arrow-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgb(241, 134, 107);
+  color: white;
+  padding: 8px;
+  border-radius: 20%;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.arrow-left {
+  left: 10px;
+}
+
+.arrow-right {
+  right: 10px;
+}
+
+
+.arrow-button:hover {
+  background-color: rgba(236, 110, 6, 0.979);
 }
 
 @keyframes show{

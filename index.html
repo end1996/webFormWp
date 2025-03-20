@@ -19,6 +19,7 @@
         <p>Arrastra tu imagen aquí o</p>
         <button class="upload-btn" onclick="triggerFileInput()">Subir imagen</button>
         <input type="file" id="file-input" style="display: none;" />
+        <img src="" alt="Imagen seleccionada" style="max-width: 100%; display: none;" />
     </div>
 
     <div class="section">
@@ -120,48 +121,49 @@
         </div>
         <div id="frame-picker-container" class="frame-ios-picker-container">
             <div class="frame-ios-picker-highlight"></div>
-            <div class="frame-ios-picker" id="frame-picker">
-
+            <button class="arrow-button arrow-left" onclick="scrollLeftHandler()">❮</button>
+            <div class="frame-ios-picker" id="frame-picker"> 
                 <div class="frame-ios-picker-item" data-value="frame1">
                     <div class="frame-thumbnail">
-                        <img src="assets/frames/marco1.png" alt="Marco 1" width="100" height="60" />
+                        <img src="assets/frames/marco1.png" alt="Marco 1" width="150" height="80" />
                    </div>
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame2">
                     <div class="frame-thumbnail">
-                        <img src="assets/frames/marco2.png" alt="Marco 2" width="150" height="43" />
+                        <img src="assets/frames/marco2.png" alt="Marco 2" width="160" height="80" />
                     </div>
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame3">
                     <div class="frame-thumbnail">
-                        <img src="assets/frames/marco3.png" alt="Marco 3" width="100" height="45" />
+                        <img src="assets/frames/marco3.png" alt="Marco 3" width="160" height="75" />
                     </div>
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame4">
                     <div class="frame-thumbnail">
-                        <img src="assets/frames/marco4.png" alt="Marco 4" width="100" height="45" />
+                        <img src="assets/frames/marco4.png" alt="Marco 4" width="160" height="65" />
                     </div>
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame5">
                     <div class="frame-thumbnail">
-                        <img src="assets/frames/marco5.png" alt="Marco 5" width="100" height="45" />
+                        <img src="assets/frames/marco5.png" alt="Marco 5" width="160" height="65" />
                     </div>   
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame6">
                     <div class="frame-thumbnail">
                         <div class="frame-thumbnail">
-                            <img src="assets/frames/marco6.png" alt="Marco 6" width="100" height="46" />
+                            <img src="assets/frames/marco6.png" alt="Marco 6" width="160" height="65" />
                         </div>
                     </div>
                 </div>
                 <div class="frame-ios-picker-item" data-value="frame7">
                     <div class="frame-thumbnail">
                         <div class="frame-thumbnail">
-                            <img src="assets/frames/marco7.png" alt="Marco 7" width="100" height="35" />
+                            <img src="assets/frames/marco7.png" alt="Marco 7" width="160" height="65" />
                         </div>
                     </div>
                 </div>
             </div>
+            <button class="arrow-button arrow-right" onclick="scrollRightHandler()">❯</button>
         </div>
     </div>
 

@@ -214,7 +214,7 @@ body {
   margin-top: 25px;
   background-color: #f8f9fa;
   display: none;
-  width: 105%;
+  width: 55%;
   margin: 31px auto;
 }
 
@@ -446,6 +446,7 @@ body {
   
     .frame-ios-picker-container {
       height: 80px;
+      width: 100%;
     }
   
     .frame-ios-picker-item {

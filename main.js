@@ -26,7 +26,7 @@ function initializeIOSPicker(pickerId) {
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
       item.scrollIntoView({ block: 'center' });
-      updateImageSize();
+      updateImageSize(); // Actualizar el tamaño de la imagen
     });
   });
 
@@ -39,11 +39,10 @@ function initializeIOSPicker(pickerId) {
   }, 100);
 }
 
-//Flecha de navegación 
 function highlightVisibleItem(picker, items) {
   // Get the middle position of the picker
   const pickerRect = picker.getBoundingClientRect();
-  const middlePosition = pickerRect.left + pickerRect.width / 2; 
+  const middlePosition = pickerRect.top + pickerRect.height / 4;
 
   // Find the item closest to the middle
   let closestItem = null;
@@ -51,7 +50,7 @@ function highlightVisibleItem(picker, items) {
 
   items.forEach(item => {
     const itemRect = item.getBoundingClientRect();
-    const itemMiddle = itemRect.left + itemRect.width / 2; 
+    const itemMiddle = itemRect.top + itemRect.height / 2;
     const distance = Math.abs(itemMiddle - middlePosition);
 
     if (distance < closestDistance) {
@@ -60,21 +59,25 @@ function highlightVisibleItem(picker, items) {
     }
   });
 
-  // Ajusta la sombra al centro del item más cercano
-  const pickerHighlight = picker.querySelector('.frame-ios-picker-highlight');
-  if (pickerHighlight && closestItem) {
-    const closestItemRect = closestItem.getBoundingClientRect();
-    const itemMiddle = closestItemRect.left + closestItemRect.width / 2; // Cambiado a left
 
-    // Posiciona la sombra en el centro del item más cercano
-    pickerHighlight.style.left = itemMiddle - pickerRect.left - (pickerHighlight.offsetWidth / 2) + 'px'; // Cambiado a left
-    pickerHighlight.style.height = closestItemRect.height + 'px';
-  }
- // Highlight the closest item
- if (closestItem) {
-   items.forEach(item => item.classList.remove('selected'));
-   closestItem.classList.add('selected');
- }
+  /* // Ajusta la sombra al centro del item más cercano
+   const pickerHighlight = picker.querySelector('.ios-picker-highlight');
+   if (pickerHighlight && closestItem) {
+     const closestItemRect = closestItem.getBoundingClientRect();
+     const itemMiddle = closestItemRect.top + closestItemRect.height / 2;
+ 
+     // Posiciona la sombra en el centro del item más cercano
+     pickerHighlight.style.top = itemMiddle - pickerRect.top - (pickerHighlight.offsetHeight / 2) + 'px';
+ 
+     // Ajusta el tamaño de la sombra para que coincida con el tamaño del item
+     pickerHighlight.style.height = closestItemRect.height + 'px';
+   }*/
+ 
+   // Highlight the closest item
+   if (closestItem) {
+     items.forEach(item => item.classList.remove('selected'));
+     closestItem.classList.add('selected');
+   }
 }
 
 function toggleSizeOptions(type) {

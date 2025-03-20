@@ -125,7 +125,7 @@ body {
   /* iOS-style picker for sizes */
   .ios-picker-container {
     position: relative;
-    height: 180px;
+    height: 120px;
     overflow: hidden;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -162,7 +162,7 @@ body {
   .ios-picker-item.selected {
     color: #e76f51;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .ios-picker-item, .frame-ios-picker-item {
@@ -174,7 +174,7 @@ body {
     top: 50%;
     left: 0;
     right: 0;
-    height: 40px;
+    height: 1.875rem;
     margin-top: -20px;
     pointer-events: none;
     box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
@@ -328,7 +328,7 @@ body {
     padding: 12px;
     border-radius: 4px;
     font-size: 16px;
-    width: 100%;
+    width: 105%;
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 20px;
@@ -458,8 +458,9 @@ body {
       height: 20px;
     }
   
-    .submit-btn {
+    .add-to-cart-btn {
       padding: 8px;
+      width: 100%;
       font-size: 0.75rem;
     }
     .comment-area {

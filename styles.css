@@ -195,7 +195,7 @@ body {
   }
   
   .comment-area {
-    width: 100%;
+    width: calc(100% - 10px);
     min-height: 80px;
     padding: 20px;
     border: 1px solid #dee2e6;
@@ -214,9 +214,8 @@ body {
   margin-top: 25px;
   background-color: #f8f9fa;
   display: none;
-  width: 450px;
+  width: 105%;
   margin: 31px auto;
-
 }
 
 .frame-ios-picker {
@@ -230,8 +229,6 @@ body {
   padding: 38px; 
   display: flex; 
   scroll-snap-type: x mandatory;
-
- 
 }
 
 .frame-ios-picker::-webkit-scrollbar {
@@ -395,20 +392,6 @@ body {
       font-size: 1rem;
     }
   
-    .frame-ios-picker-container {
-      height: 100px;
-    }
-  
-    .frame-ios-picker-item {
-      height: 35px;
-      line-height: 2.188rem;
-    }
-  
-    .frame-thumbnail {
-      width: 70px;
-      height: 25px;
-    }
-  
     .submit-btn {
       padding: 10px;
       font-size: 0.875rem;
@@ -416,13 +399,14 @@ body {
 
     .comment-area {
       min-height: 120px;
-      padding: 15px 0 15px 0;/* Ajustar espacio al lado derecho para pantallas más pequeñas */
+      width: 100%;
+      padding-right: 15px; /* Ajustar espacio al lado derecho para pantallas más pequeñas */
     }
   }
   
   @media (max-width: 480px) {
     h1 {
-      font-size: 18px;
+      font-size: 1.125rem;
     }
 
     .upload-area {
@@ -431,11 +415,11 @@ body {
   
     .upload-btn {
       padding: 6px 16px;
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   
     .section-title {
-      font-size: 14px;
+      font-size: 0.875rem;
     }
   
     .quantity-field input {
@@ -453,7 +437,7 @@ body {
     .ios-picker-item {
       height: 20px;
       line-height: 30px;
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   
     .ios-picker-item.selected {
@@ -476,7 +460,7 @@ body {
   
     .submit-btn {
       padding: 8px;
-      font-size: 12px;
+      font-size: 0.75rem;
     }
     .comment-area {
       min-height: 100px;

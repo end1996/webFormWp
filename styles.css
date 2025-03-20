@@ -361,6 +361,10 @@ body {
       height: 28px;
     }
 
+    .ios-picker-container {
+      width: 100%;
+    }
+
     .custom-size {
       width: 100%;
       padding: 0;
@@ -369,23 +373,6 @@ body {
 
     .custom-size input {
       max-width: 40%;
-    }
-  
-    .ios-picker-container {
-      height: 150px;
-      width: 90%; /* Ajustar el ancho para pantallas medianas */
-      margin-left: auto; /* Centrar el contenedor horizontalmente */
-      margin-right: auto;
-    }
-  
-    .ios-picker-item {
-      height: 25px;
-      line-height: 2.5rem;
-      font-size: 0.875rem;
-    }
-  
-    .ios-picker-item.selected {
-      font-size: 1rem;
     }
   
     .submit-btn {

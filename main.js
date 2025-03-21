@@ -276,7 +276,7 @@ function updateImageSize() {
     let smallCmToPx = 8.5; // Conversión estándar para tamaños pequeños
     let largeCmToPx = 10; // Conversión para tamaños grandes
 
-    if (screenResolution <= 600 * 1000) {
+    if (screenResolution <= 768 * 1024) {
       // Dispositivos pequeños
       smallSizeThreshold = 1;
       smallCmToPx = 2;

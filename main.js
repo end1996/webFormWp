@@ -1,50 +1,74 @@
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize iOS-style size picker
-  initializeIOSPicker('size-picker');
+  const sizePicker = document.getElementById('size-picker');
+  if (sizePicker) {
+    initializeIOSPicker('size-picker');
+  } else {
+    console.error('Size picker not found');
+  }
 
   // Initialize iOS-style frame picker
-  initializeIOSPicker('frame-picker');
+  const framePicker = document.getElementById('frame-picker');
+  if (framePicker) {
+    initializeIOSPicker('frame-picker');
+  } else {
+    console.error('Frame picker not found');
+  }
+
+  // Initialize the upload functionality
+  uploadImage();
+
+  // Add event listener for the add to cart button
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', addToCart);
+  }
 });
 
 function initializeIOSPicker(pickerId) {
   const picker = document.getElementById(pickerId);
+  if (!picker) {
+    console.error('Picker not found:', pickerId);
+    return;
+  }
+
   const pickerItems = picker.querySelectorAll('.ios-picker-item, .frame-ios-picker-item');
+  if (pickerItems.length === 0) {
+    console.error('No picker items found in:', pickerId);
+    return;
+  }
 
   // Set the first item as selected initially
-  if (pickerItems.length > 0) {
-    pickerItems[0].classList.add('selected');
-  }
+  pickerItems[0].classList.add('selected');
 
   // Add scroll event listener
   picker.addEventListener('scroll', function () {
+    console.log('Scroll event triggered'); // Depuración
     highlightVisibleItem(picker, pickerItems);
   });
 
-  // evento para el clic en la lista de elementos
+  // Add click event listener for items
   pickerItems.forEach(item => {
     item.addEventListener('click', function () {
+      console.log('Item clicked:', item.textContent); // Depuración
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
-      item.scrollIntoView({ block: 'center' });
-      updateImageSize(); // Actualizar el tamaño de la imagen
+      item.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   });
 
   // Simulate initial scroll to center the first item
   setTimeout(function () {
     if (pickerItems.length > 0) {
-      pickerItems[0].scrollIntoView({ block: 'center' });
-      updateImageSize(); // Actualizar el tamaño de la imagen
+      pickerItems[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   }, 100);
 }
 
 function highlightVisibleItem(picker, items) {
-  // Get the middle position of the picker
   const pickerRect = picker.getBoundingClientRect();
-  const middlePosition = pickerRect.top + pickerRect.height / 4;
+  const middlePosition = pickerRect.top + pickerRect.height / 2;
 
-  // Find the item closest to the middle
   let closestItem = null;
   let closestDistance = Infinity;
 
@@ -59,24 +83,19 @@ function highlightVisibleItem(picker, items) {
     }
   });
 
-  /* // Ajusta la sombra al centro del item más cercano
-   const pickerHighlight = picker.querySelector('.ios-picker-highlight');
-   if (pickerHighlight && closestItem) {
-     const closestItemRect = closestItem.getBoundingClientRect();
-     const itemMiddle = closestItemRect.top + closestItemRect.height / 2;
- 
-     // Posiciona la sombra en el centro del item más cercano
-     pickerHighlight.style.top = itemMiddle - pickerRect.top - (pickerHighlight.offsetHeight / 2) + 'px';
- 
-     // Ajusta el tamaño de la sombra para que coincida con el tamaño del item
-     pickerHighlight.style.height = closestItemRect.height + 'px';
-   }*/
- 
-   // Highlight the closest item
-   if (closestItem) {
-     items.forEach(item => item.classList.remove('selected'));
-     closestItem.classList.add('selected');
-   }
+  const pickerHighlight = picker.querySelector('.ios-picker-highlight');
+  if (pickerHighlight && closestItem) {
+    const closestItemRect = closestItem.getBoundingClientRect();
+    const itemMiddle = closestItemRect.top + closestItemRect.height / 2;
+
+    pickerHighlight.style.top = itemMiddle - pickerRect.top - (pickerHighlight.offsetHeight / 2) + 'px';
+    pickerHighlight.style.height = closestItemRect.height + 'px';
+  }
+
+  if (closestItem) {
+    items.forEach(item => item.classList.remove('selected'));
+    closestItem.classList.add('selected');
+  }
 }
 
 function toggleSizeOptions(type) {

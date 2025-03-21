@@ -266,9 +266,9 @@ function updateImageSize() {
     const dpi = window.devicePixelRatio * 96; // Ajusta según resolución del dispositivo
 
     // Factores de conversión diferenciados
-    const smallSizeThreshold = 20; // Umbral de tamaño pequeño
-    const smallCmToPx = 27; // Conversión estándar para tamaños pequeños
-    const largeCmToPx = 30; // Conversión para tamaños grandes
+    const smallSizeThreshold = 5; // Umbral de tamaño pequeño
+    const smallCmToPx = 8.5; // Conversión estándar para tamaños pequeños
+    const largeCmToPx = 10; // Conversión para tamaños grandes
 
     // Elegir factor de conversión basado en el tamaño seleccionado
     const cmToPx = (widthCm <= smallSizeThreshold && heightCm <= smallSizeThreshold) ? smallCmToPx : largeCmToPx;

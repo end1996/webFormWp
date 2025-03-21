@@ -153,64 +153,69 @@ function uploadImage() {
     fileInput.click(); // Simula un clic en el input de archivo
   };
 
-  // Función para manejar el cambio de imagen
-  const handleImageChange = (file) => {
-    if (file) {
-      const reader = new FileReader(); // Crear un FileReader para leer el archivo
-      reader.onloadend = () => {
-        // Cuando la lectura termine, mostrar la imagen
-        const uploadedImage = document.getElementById('uploaded-image');
-        const uploadArea = document.querySelector('.upload-area');
-        uploadedImage.src = reader.result;
-        uploadedImage.style.display = 'block'; 
-
-        // Guardar la URL de la imagen en la variable global
-        uploadedImageData = reader.result;
-        
-        const svgElement = document.querySelector('.upload-area svg');
-        const paragraphElement = document.querySelector('.upload-area p');
-        const buttonElement = document.querySelector('.upload-btn');
-        svgElement.style.display = 'none';
-        paragraphElement.style.display = 'none';
-        buttonElement.style.display = 'none';
-        // Añadir un botón para eliminar la imagen
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'Eliminar imagen';
-        removeButton.className = 'remove-image-btn';
-        removeButton.onclick = removeUploadedImage;
-        uploadArea.appendChild(removeButton)
-      };
-      reader.readAsDataURL(file); // Leer el archivo como una URL de datos
-    }
+    // Función para manejar el cambio de imagen
+    const handleImageChange = (file) => {
+      if (file) {
+        const reader = new FileReader(); // Crear un FileReader para leer el archivo
+        reader.onloadend = () => {
+          // Cuando la lectura termine, mostrar la imagen
+          const uploadedImage = document.getElementById('uploaded-image');
+          const uploadArea = document.querySelector('.upload-area');
+          const removeButton = document.querySelector('.remove-image-btn');
+          const removeButtonContainer = document.querySelector('.remove-image-btn-container');
+  
+          uploadedImage.src = reader.result;
+          uploadedImage.style.display = 'block'; 
+  
+          // Guardar la URL de la imagen en la variable global
+          uploadedImageData = reader.result;
+          
+          const svgElement = document.querySelector('.upload-area svg');
+          const paragraphElement = document.querySelector('.upload-area p');
+          const buttonElement = document.querySelector('.upload-btn');
+  
+          // Ocultar los elementos de carga
+          svgElement.style.display = 'none';
+          paragraphElement.style.display = 'none';
+          buttonElement.style.display = 'none';
+  
+          // Mostrar botón de eliminar imagen
+          removeButton.style.display = 'block';
+          removeButton.onclick = removeUploadedImage;
+  
+          // Ajustes de estilo al subir imagen
+          uploadArea.style.margin = '0';
+          uploadArea.style.padding = '0 15px';
+          removeButtonContainer.style.padding = '0 0 20px 0';
+        };
+        reader.readAsDataURL(file); // Leer el archivo como una URL de datos
+      }
   };
 
   // Función para eliminar la imagen subida
-  window.removeUploadedImage = () => {
+window.removeUploadedImage = () => {
     uploadedImageData = null;
-    const uploadArea = document.querySelector('.upload-area');
-    uploadArea.innerHTML = 
-      `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e76f51" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <polyline points="21 15 16 10 5 21" />
-        </svg>
-        <p>Arrastra tu imagen aquí o</p>
-        <button class="upload-btn" onclick="triggerFileInput()">Subir imagen</button>
-        <input type="file" id="file-input" style="display: none;" />
-        <div class="image-container">
-          <img id="uploaded-image" src="" alt="Imagen seleccionada" style="max-width: 100%; display: none;" />
-        </div>`;
 
-    // Volver a asignar el evento al nuevo input
-    const fileInput = document.getElementById('file-input');
-    if (fileInput) {
-      fileInput.addEventListener('change', (event) => {
-        const file = event.target.files?.[0];
-        handleImageChange(file);
-      });
-    }
-  };
+    // Restaurar visibilidad de los elementos originales
+    const uploadedImage = document.getElementById('uploaded-image');
+    const removeButton = document.querySelector('.remove-image-btn');
+    const svgElement = document.querySelector('.upload-area svg');
+    const paragraphElement = document.querySelector('.upload-area p');
+    const buttonElement = document.querySelector('.upload-btn');
+    const uploadArea = document.querySelector('.upload-area');
+
+    // Ocultar la imagen y el botón de eliminar
+    uploadedImage.src = "";
+    uploadedImage.style.display = "none";
+    removeButton.style.display = "none";
+
+    // Restaurar los elementos originales del upload
+    svgElement.style.display = "";
+    paragraphElement.style.display = "";
+    buttonElement.style.display = "";
+    uploadArea.style.padding = "15px 15px";
+};
+
 
   // Función para manejar el evento "drop"
   const handleDrop = (event) => {
@@ -257,20 +262,44 @@ function updateImageSize() {
   if (selectedSize && uploadedImage) {
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
 
-    // Define factores de conversión diferentes para tamaños grandes y pequeños
-    const smallSizeThreshold = 30; // Umbral para considerar un tamaño como pequeño
-    const smallCmToPx = 37; // Factor de conversión para tamaños pequeños
-    const largeCmToPx = 13; // Factor de conversión para tamaños grandes
+    // Determinar la densidad de píxeles del dispositivo
+    const dpi = window.devicePixelRatio * 96; // Ajusta según resolución del dispositivo
 
-    // Determinar el factor de conversión a usar
+    // Factores de conversión diferenciados
+    const smallSizeThreshold = 20; // Umbral de tamaño pequeño
+    const smallCmToPx = 27; // Conversión estándar para tamaños pequeños
+    const largeCmToPx = 30; // Conversión para tamaños grandes
+
+    // Elegir factor de conversión basado en el tamaño seleccionado
     const cmToPx = (widthCm <= smallSizeThreshold && heightCm <= smallSizeThreshold) ? smallCmToPx : largeCmToPx;
+    
+    // Ajuste basado en la densidad del dispositivo
+    const adjustedCmToPx = cmToPx * (dpi / 96);
 
-    const widthPx = widthCm * cmToPx;
-    const heightPx = heightCm * cmToPx;
+    const widthPx = widthCm * adjustedCmToPx;
+    const heightPx = heightCm * adjustedCmToPx;
+
+    // Ajustar la imagen sin desbordar el contenedor
     uploadedImage.style.width = `${widthPx}px`;
     uploadedImage.style.height = `${heightPx}px`;
+    uploadedImage.style.maxWidth = "100%"; // Evita que se salga del contenedor
+    uploadedImage.style.maxHeight = "100%"; // Evita que se salga del contenedor
+    uploadedImage.style.objectFit = "cover";
+
+     // Asegurar que el contenedor tenga el tamaño correcto
+     imageContainer.style.width = `${widthPx}px`;
+     imageContainer.style.height = `${heightPx}px`;
+     imageContainer.style.overflow = "hidden"; // Evita desbordamientos
+     imageContainer.style.display = "flex";
+     imageContainer.style.alignItems = "center";
+     imageContainer.style.justifyContent = "center";
   }
 }
+
+// Llamar a la función cuando cambie el tamaño de la ventana
+window.onload = updateImageSize;
+window.onresize = updateImageSize;
+
 
 // Llamar a la función para inicializar
 uploadImage();

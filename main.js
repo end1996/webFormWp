@@ -265,10 +265,23 @@ function updateImageSize() {
     // Determinar la densidad de píxeles del dispositivo
     const dpi = window.devicePixelRatio * 96; // Ajusta según resolución del dispositivo
 
+    // Obtener resolución actual
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const screenResolution = screenWidth * screenHeight;
+
     // Factores de conversión diferenciados
-    const smallSizeThreshold = 5; // Umbral de tamaño pequeño
-    const smallCmToPx = 8.5; // Conversión estándar para tamaños pequeños
-    const largeCmToPx = 10; // Conversión para tamaños grandes
+    
+    let smallSizeThreshold = 5; // Umbral de tamaño pequeño
+    let smallCmToPx = 8.5; // Conversión estándar para tamaños pequeños
+    let largeCmToPx = 10; // Conversión para tamaños grandes
+
+    if (screenResolution <= 600 * 1000) {
+      // Dispositivos pequeños
+      smallSizeThreshold = 1;
+      smallCmToPx = 2;
+      largeCmToPx = 3;
+    }
 
     // Elegir factor de conversión basado en el tamaño seleccionado
     const cmToPx = (widthCm <= smallSizeThreshold && heightCm <= smallSizeThreshold) ? smallCmToPx : largeCmToPx;

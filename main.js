@@ -53,6 +53,8 @@ function initializeIOSPicker(pickerId) {
       console.log('Item clicked:', item.textContent); // Depuración
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
+      item.scrollIntoView({ block: 'center' });
+      updateImageSize(); // Actualizar el tamaño de la imagen
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   });
@@ -60,6 +62,8 @@ function initializeIOSPicker(pickerId) {
   // Simulate initial scroll to center the first item
   setTimeout(function () {
     if (pickerItems.length > 0) {
+      pickerItems[0].scrollIntoView({ block: 'center' });
+      updateImageSize(); // Actualizar el tamaño de la imagen
       pickerItems[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   }, 100);

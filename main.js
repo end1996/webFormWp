@@ -59,7 +59,6 @@ function highlightVisibleItem(picker, items) {
     }
   });
 
-
   /* // Ajusta la sombra al centro del item más cercano
    const pickerHighlight = picker.querySelector('.ios-picker-highlight');
    if (pickerHighlight && closestItem) {
@@ -100,7 +99,6 @@ function scrollLeftHandler() {
   const itemWidth = picker.querySelector('.frame-ios-picker-item').offsetWidth; 
   const currentScroll = picker.scrollLeft; 
 
-
   if (currentScroll > 0) {
     picker.scrollBy({
       left: -itemWidth, 
@@ -114,7 +112,6 @@ function scrollRightHandler() {
   const itemWidth = picker.querySelector('.frame-ios-picker-item').offsetWidth; 
   const maxScroll = picker.scrollWidth - picker.clientWidth; 
 
- 
   if (picker.scrollLeft < maxScroll) {
     picker.scrollBy({
       left: itemWidth,
@@ -122,6 +119,9 @@ function scrollRightHandler() {
     });
   }
 }
+
+// Variables globales para almacenar la imagen
+let uploadedImageData = null;
 
 function uploadImage() {
   // Función para abrir el diálogo de selección de archivo
@@ -140,6 +140,9 @@ function uploadImage() {
         const uploadArea = document.querySelector('.upload-area');
         uploadedImage.src = reader.result;
         uploadedImage.style.display = 'block'; 
+
+        // Guardar la URL de la imagen en la variable global
+        uploadedImageData = reader.result;
         
         const svgElement = document.querySelector('.upload-area svg');
         const paragraphElement = document.querySelector('.upload-area p');
@@ -249,32 +252,147 @@ function updateImageSize() {
 // Llamar a la función para inicializar
 uploadImage();
 
-// Funcionalidad Carrito
+// Función para añadir al carrito
+document.addEventListener('DOMContentLoaded', function () {
+  console.log("✅ DOM completamente cargado.");
 
-document.getElementById("add-to-cart-btn").addEventListener("click", function () {
-  let cantidad = document.querySelector(".quantity-field input").value;
-  let size = document.querySelector(".ios-picker-item.selected")?.dataset.value || "10X15";
-  let marco = document.querySelector("input[name='frame']:checked").nextSibling.textContent.trim();
-  let comentarios = document.querySelector(".comment-area").value;
+  // Buscar el botón de agregar al carrito
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
 
-  let formData = new FormData();
-  formData.append("action", "agregar_producto_personalizado");
-  formData.append("cantidad", cantidad);
-  formData.append("size", size);
-  formData.append("marco", marco);
-  formData.append("comentarios", comentarios);
-
-  fetch(ajaxurl, {
-      method: "POST",
-      body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-          alert("Producto añadido al carrito.");
-          window.location.href = "/carrito/"; // Redirigir al carrito
-      } else {
-          alert("Hubo un error al agregar el producto.");
-      }
-  });
+  if (addToCartBtn) {
+    console.log("✅ Botón 'Agregar al carrito' encontrado.");
+    addToCartBtn.addEventListener('click', function () {
+      console.log("🛒 Botón 'Agregar al carrito' clickeado.");
+      addToCart();
+    });
+  } else {
+    console.log("⚠️ No se encontró el botón 'Agregar al carrito'. Verifica la clase en el HTML.");
+  }
 });
+
+// Exponer la función al ámbito global para evitar problemas con `onclick`
+window.addToCart = addToCart;
+
+// Función para añadir al carrito --------------------------------------
+function addToCart() {
+  console.log("🚀 addToCart() fue llamada correctamente");
+
+  // Verificar si hay una imagen subida
+  if (!uploadedImageData) {
+    showNotification('Por favor, sube una imagen primero.', 'error');
+    console.log("⚠️ No hay imagen subida.");
+    return;
+  }
+
+  // Obtener los valores del formulario
+  const quantity = document.querySelector('#quantity-input').value;
+  const isCustomSize = document.querySelector('input[name="size-type"]:checked').value === 'custom';
+
+  let size, customWidth, customHeight;
+  if (isCustomSize) {
+    const customSizeInputs = document.querySelectorAll('#custom-size input');
+    customWidth = customSizeInputs[0].value;
+    customHeight = customSizeInputs[1].value;
+
+    if (!customWidth || !customHeight) {
+      showNotification('Por favor, ingresa las dimensiones personalizadas.', 'error');
+      console.log("⚠️ Falta ingresar dimensiones personalizadas.");
+      return;
+    }
+    size = `${customWidth}x${customHeight}`;
+  } else {
+    const selectedSizeElement = document.querySelector('#size-picker .ios-picker-item.selected');
+    size = selectedSizeElement ? selectedSizeElement.getAttribute('data-value') : '10X15';
+  }
+
+  const comments = document.querySelector('.comment-area').value;
+  const withFrame = document.querySelector('input[name="frame"]:checked').value !== 'sin-marco';
+  let frame = 'sin-marco';
+
+  if (withFrame) {
+    const selectedFrameElement = document.querySelector('#frame-picker .frame-ios-picker-item.selected');
+    frame = selectedFrameElement ? selectedFrameElement.getAttribute('data-value') : 'frame1';
+  }
+
+  // Verificar si `ajax_object` está definido antes de usarlo
+  if (typeof ajax_object === 'undefined') {
+    console.error("❌ ERROR: ajax_object no está definido. Verifica que el script de WordPress está cargando correctamente.");
+    showNotification("Error de configuración. Contacte con el administrador.", "error");
+    return;
+  }
+
+  // Preparar los datos para enviar
+  const formData = new FormData();
+  formData.append('action', 'process_print_image');
+  formData.append('nonce', ajax_object.nonce);
+  formData.append('image_data', uploadedImageData);
+  formData.append('quantity', quantity); //✅
+  formData.append('size', size); //✅ 
+  formData.append('is_custom_size', isCustomSize); //✅
+  formData.append('custom_width', customWidth || 0); //✅
+  formData.append('custom_height', customHeight || 0); //✅
+  formData.append('comments', comments); //✅
+  formData.append('frame', frame); //✅
+
+  console.log("📦 Enviando datos al servidor...", Object.fromEntries(formData));
+
+  // Mostrar indicador de carga
+  showLoadingIndicator();
+
+  // Enviar datos mediante AJAX
+  fetch(ajax_object.ajax_url, {
+    method: 'POST',
+    body: formData,
+    credentials: 'same-origin'
+  })
+    .then(response => response.json())
+    .then(data => {
+      hideLoadingIndicator();
+      console.log("🔄 Respuesta del servidor:", data);
+
+      if (data.success) {
+        showNotification('¡Producto añadido al carrito!', 'success');
+        setTimeout(() => {
+          window.location.href = data.data.cart_url;
+        }, 1500);
+      } else {
+        showNotification('Error: ' + data.data, 'error');
+      }
+    })
+    .catch(error => {
+      hideLoadingIndicator();
+      console.error("❌ Error al procesar la solicitud:", error);
+      showNotification('Error al procesar la solicitud: ' + error.message, 'error');
+    });
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.classList.add('show'), 10);
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => document.body.removeChild(notification), 300);
+  }, 3000);
+}
+
+// Función para mostrar indicador de carga
+function showLoadingIndicator() {
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'loading-overlay';
+  loadingOverlay.innerHTML = `<div class="loading-spinner"></div><p>Procesando...</p>`;
+  document.body.appendChild(loadingOverlay);
+  setTimeout(() => loadingOverlay.classList.add('show'), 10);
+}
+
+// Función para ocultar indicador de carga
+function hideLoadingIndicator() {
+  const loadingOverlay = document.querySelector('.loading-overlay');
+  if (loadingOverlay) {
+    loadingOverlay.classList.remove('show');
+    setTimeout(() => document.body.removeChild(loadingOverlay), 300);
+  }
+}

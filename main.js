@@ -220,6 +220,7 @@ window.removeUploadedImage = () => {
     const paragraphElement = document.querySelector('.upload-area p');
     const buttonElement = document.querySelector('.upload-btn');
     const uploadArea = document.querySelector('.upload-area');
+    const imageContainer = document.querySelector('.image-container');
 
     // Ocultar la imagen y el botón de eliminar
     uploadedImage.src = "";
@@ -230,7 +231,8 @@ window.removeUploadedImage = () => {
     svgElement.style.display = "";
     paragraphElement.style.display = "";
     buttonElement.style.display = "";
-    //uploadArea.style.padding = "15px 15px";
+    uploadArea.style.padding = "5px";
+    imageContainer.style.padding = "5px";
 };
 
 
@@ -275,47 +277,61 @@ window.removeUploadedImage = () => {
 function updateImageSize() {
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
   const uploadedImage = document.getElementById("uploaded-image");
+  const uploadArea = document.querySelector('.upload-area');
+  const container = uploadedImage.parentElement; // Contenedor de la imagen
 
   if (selectedSize && uploadedImage) {
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
-    const cmToPx = 1 / 0.015; // Factor de conversión (ajústalo según necesidad)
 
-    // Tamaño deseado en píxeles (basado en cm)
-    const desiredWidthPx = widthCm * cmToPx;
-    console.log("desiredWidthPx", desiredWidthPx);
-    const desiredHeightPx = heightCm * cmToPx;
-    console.log("desiredHeightPx", desiredHeightPx);
+    // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
+    const cmToPx = 40; // Ajustado para evitar dimensiones excesivas
+    // Alternativa dinámica: const cmToPx = (96 * window.devicePixelRatio) / 2.54;
 
-    // Altura máxima permitida (la altura original de la imagen)
-    const maxAllowedHeight = uploadedImage.naturalHeight;
-    console.log("maxAllowedHeight", maxAllowedHeight);
+    // 2. Tamaño deseado en píxeles
+    let desiredWidthPx = widthCm * cmToPx;
+    let desiredHeightPx = heightCm * cmToPx;
 
-    // Calcular relación de aspecto para escalado proporcional
-    const aspectRatio = desiredWidthPx / desiredHeightPx;
-    console.log("aspectRatio", aspectRatio);
+    // 3. Límites físicos (tamaño original y contenedor)
+    const maxNaturalWidth = uploadedImage.naturalWidth;
+    const maxNaturalHeight = uploadedImage.naturalHeight;
+    const maxContainerWidth = container.clientWidth;
+    const maxContainerHeight = container.clientHeight;
 
-    // Ajustar altura si excede el máximo permitido
-    let finalHeight = desiredHeightPx;
-    console.log("finalHeight", finalHeight);
-    let finalWidth = desiredWidthPx;
+    console.log('Dimensiones:', {
+      deseado: { desiredWidthPx, desiredHeightPx },
+      máximoNatural: { maxNaturalWidth, maxNaturalHeight },
+      contenedor: { maxContainerWidth, maxContainerHeight }
+    });
 
-    if (desiredHeightPx > maxAllowedHeight) {
-      finalHeight = maxAllowedHeight - 200;  // Reducir 50px para evitar desbordamiento
-      finalWidth = finalHeight * aspectRatio; // Mantener proporción
-    }
-    console.log("finalHeight luego", finalHeight);
+    // 4. Ajuste inteligente de tamaño
+    const widthScaleFactor = Math.min(
+      1,
+      maxNaturalWidth / desiredWidthPx,
+      maxContainerWidth / desiredWidthPx
+    );
+    
+    const heightScaleFactor = Math.min(
+      1,
+      maxNaturalHeight / desiredHeightPx,
+      maxContainerHeight / desiredHeightPx
+    );
 
-    // Aplicar estilos
-    //uploadedImage.style.width = `${finalWidth}px`;
+    const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
+
+    const finalWidth = desiredWidthPx * scaleFactor;
+    const finalHeight = desiredHeightPx * scaleFactor;
+
+    // 5. Aplicación de estilos optimizada
     uploadedImage.style.width = `${finalWidth}px`;
     uploadedImage.style.height = `${finalHeight}px`;
-    uploadedImage.style.maxWidth = "100%"; // Evitar desborde horizontal
-    uploadedImage.style.maxHeight = `${maxAllowedHeight}px`; // Limitar a la altura original
-    uploadedImage.style.objectFit = "cover"; // Cubrir el contenedor sin deformar
-    uploadedImage.style.display = "flex";
+    uploadedImage.style.maxWidth = '100%';
+    uploadedImage.style.maxHeight = '100%';
+    uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
+    uploadedImage.style.display = 'block';
+
+    console.log('Tamaño final aplicado:', { finalWidth, finalHeight });
   }
 }
-
 // Llamar a la función cuando cambie el tamaño de la ventana
 window.onload = updateImageSize;
 window.onresize = updateImageSize;

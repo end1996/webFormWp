@@ -278,52 +278,41 @@ function updateImageSize() {
 
   if (selectedSize && uploadedImage) {
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
+    const cmToPx = 1 / 0.015; // Factor de conversión (ajústalo según necesidad)
 
-    // Determinar la densidad de píxeles del dispositivo
-    const dpi = window.devicePixelRatio * 96; // Ajusta según resolución del dispositivo
+    // Tamaño deseado en píxeles (basado en cm)
+    const desiredWidthPx = widthCm * cmToPx;
+    console.log("desiredWidthPx", desiredWidthPx);
+    const desiredHeightPx = heightCm * cmToPx;
+    console.log("desiredHeightPx", desiredHeightPx);
 
-    // Obtener resolución actual
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    const screenResolution = screenWidth * screenHeight;
+    // Altura máxima permitida (la altura original de la imagen)
+    const maxAllowedHeight = uploadedImage.naturalHeight;
+    console.log("maxAllowedHeight", maxAllowedHeight);
 
-    // Factores de conversión diferenciados
-    
-    let smallSizeThreshold = 25; // Umbral de tamaño pequeño
-    let smallCmToPx = 20; // Conversión estándar para tamaños pequeños
-    let largeCmToPx = 15; // Conversión para tamaños grandes
+    // Calcular relación de aspecto para escalado proporcional
+    const aspectRatio = desiredWidthPx / desiredHeightPx;
+    console.log("aspectRatio", aspectRatio);
 
-    /*if (screenResolution <= 768 * 1024) {
-      // Dispositivos pequeños
-      smallSizeThreshold = 1;
-      smallCmToPx = 2;
-      largeCmToPx = 3;
-    }*/
+    // Ajustar altura si excede el máximo permitido
+    let finalHeight = desiredHeightPx;
+    console.log("finalHeight", finalHeight);
+    let finalWidth = desiredWidthPx;
 
-    // Elegir factor de conversión basado en el tamaño seleccionado
-    const cmToPx = (widthCm <= smallSizeThreshold && heightCm <= smallSizeThreshold) ? smallCmToPx : largeCmToPx;
-    
-    // Ajuste basado en la densidad del dispositivo
-    const adjustedCmToPx = cmToPx * (dpi / 96);
+    if (desiredHeightPx > maxAllowedHeight) {
+      finalHeight = maxAllowedHeight - 200;  // Reducir 50px para evitar desbordamiento
+      finalWidth = finalHeight * aspectRatio; // Mantener proporción
+    }
+    console.log("finalHeight luego", finalHeight);
 
-    const widthPx = widthCm * adjustedCmToPx;
-    const heightPx = heightCm * adjustedCmToPx;
-
-    // Ajustar la imagen sin desbordar el contenedor
-    uploadedImage.style.width = `${widthPx}px`;
-    uploadedImage.style.height = `${heightPx}px`;
-    uploadedImage.style.maxWidth = "100%"; // Evita que se salga del contenedor
-    uploadedImage.style.maxHeight = "100%"; // Evita que se salga del contenedor
-    uploadedImage.style.objectFit = "cover";
-    uploadImage.style.display = "flex";
-
-     // Asegurar que el contenedor tenga el tamaño correcto
-     imageContainer.style.width = `${widthPx}px`;
-     imageContainer.style.height = `${heightPx}px`;
-     imageContainer.style.overflow = "hidden"; // Evita desbordamientos
-     imageContainer.style.display = "flex";
-     imageContainer.style.alignItems = "center";
-     imageContainer.style.justifyContent = "center";
+    // Aplicar estilos
+    //uploadedImage.style.width = `${finalWidth}px`;
+    uploadedImage.style.width = `${finalWidth}px`;
+    uploadedImage.style.height = `${finalHeight}px`;
+    uploadedImage.style.maxWidth = "100%"; // Evitar desborde horizontal
+    uploadedImage.style.maxHeight = `${maxAllowedHeight}px`; // Limitar a la altura original
+    uploadedImage.style.objectFit = "cover"; // Cubrir el contenedor sin deformar
+    uploadedImage.style.display = "flex";
   }
 }
 
@@ -333,7 +322,6 @@ window.onresize = updateImageSize;
 
 
 function analyzeImagePixels(img) {
-  console.log("Dimensiones de la imagen:", img.naturalWidth, img.naturalHeight);
 
   if (img.naturalWidth === 0 || img.naturalHeight === 0) {
     console.log("⚠️ La imagen aún no se ha cargado completamente.");
@@ -378,6 +366,7 @@ window.onload = function () {
     console.log("⌛ Esperando a que la imagen se cargue...");
     uploadedImage.onload = function () {
       console.log("✅ Imagen cargada.");
+      analyzeImagePixels(uploadedImage);
       updateImageSize();
     };
   }
@@ -394,9 +383,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const addToCartBtn = document.querySelector('.add-to-cart-btn');
 
   if (addToCartBtn) {
-    console.log("✅ Botón 'Agregar al carrito' encontrado.");
+    //console.log("✅ Botón 'Agregar al carrito' encontrado.");
     addToCartBtn.addEventListener('click', function () {
-      console.log("🛒 Botón 'Agregar al carrito' clickeado.");
+      //console.log("🛒 Botón 'Agregar al carrito' clickeado.");
       addToCart();
     });
   } else {

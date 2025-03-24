@@ -4,6 +4,7 @@ body {
     color: #333;
     max-width: 600px;
     margin: 0 auto;
+    box-sizing: border-box;
   }
   
   h1 {
@@ -24,6 +25,9 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     width: 100%;
+    overflow: hidden;
+    height: 60vh;
+    align-items: center;
   }
   
   .upload-area:hover {
@@ -54,12 +58,14 @@ body {
     padding: 10px;
     display: flex;
     justify-content: center;
+    overflow: hidden;
   }
 
   #uploaded-image {
     max-width: 100%;
     display: none; /* Ocultar la imagen por defecto */
-    object-fit: cover; /* Cambia el valor de object-fit según tus necesidades */
+    object-fit: contain; /* Cambia el valor de object-fit según tus necesidades */
+    box-sizing: border-box;
   }
 
   /* Estilo para el botón de eliminar imagen */
@@ -359,6 +365,7 @@ body {
 
     .upload-area {
       width: calc(100% - 30px);
+      height: 60vh;
     }
   
     .upload-btn {

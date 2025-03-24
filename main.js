@@ -38,36 +38,36 @@ function initializeIOSPicker(pickerId) {
     return;
   }
 
-  // Set the first item as selected initially
-  pickerItems[0].classList.add('selected');
+  // No seleccionar ningún elemento al inicio
+  pickerItems.forEach(i => i.classList.remove('selected'));
 
-  // Add scroll event listener
+  // Evento de scroll para detectar el elemento más cercano
   picker.addEventListener('scroll', function () {
     console.log('Scroll event triggered'); // Depuración
     highlightVisibleItem(picker, pickerItems);
   });
 
-  // Add click event listener for items
+  // Evento de clic en los elementos
   pickerItems.forEach(item => {
     item.addEventListener('click', function () {
       console.log('Item clicked:', item.textContent); // Depuración
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
-      item.scrollIntoView({ block: 'center' });
       updateImageSize(); // Actualizar el tamaño de la imagen
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
   });
 
-  // Simulate initial scroll to center the first item
-  setTimeout(function () {
+  // Evitar que seleccione automáticamente el primer elemento
+  /* setTimeout(function () {
     if (pickerItems.length > 0) {
       pickerItems[0].scrollIntoView({ block: 'center' });
-      updateImageSize(); // Actualizar el tamaño de la imagen
+      updateImageSize(); // Esto solo se activará si hay un seleccionado
       pickerItems[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
-  }, 100);
+  }, 100); */
 }
+
 
 function highlightVisibleItem(picker, items) {
   const pickerRect = picker.getBoundingClientRect();
@@ -213,7 +213,7 @@ window.removeUploadedImage = () => {
     svgElement.style.display = "";
     paragraphElement.style.display = "";
     buttonElement.style.display = "";
-    uploadArea.style.padding = "15px 15px";
+    //uploadArea.style.padding = "15px 15px";
 };
 
 
@@ -272,16 +272,16 @@ function updateImageSize() {
 
     // Factores de conversión diferenciados
     
-    let smallSizeThreshold = 5; // Umbral de tamaño pequeño
-    let smallCmToPx = 8.5; // Conversión estándar para tamaños pequeños
-    let largeCmToPx = 10; // Conversión para tamaños grandes
+    let smallSizeThreshold = 25; // Umbral de tamaño pequeño
+    let smallCmToPx = 20; // Conversión estándar para tamaños pequeños
+    let largeCmToPx = 15; // Conversión para tamaños grandes
 
-    if (screenResolution <= 768 * 1024) {
+    /*if (screenResolution <= 768 * 1024) {
       // Dispositivos pequeños
       smallSizeThreshold = 1;
       smallCmToPx = 2;
       largeCmToPx = 3;
-    }
+    }*/
 
     // Elegir factor de conversión basado en el tamaño seleccionado
     const cmToPx = (widthCm <= smallSizeThreshold && heightCm <= smallSizeThreshold) ? smallCmToPx : largeCmToPx;
@@ -298,6 +298,7 @@ function updateImageSize() {
     uploadedImage.style.maxWidth = "100%"; // Evita que se salga del contenedor
     uploadedImage.style.maxHeight = "100%"; // Evita que se salga del contenedor
     uploadedImage.style.objectFit = "cover";
+    uploadImage.style.display = "flex";
 
      // Asegurar que el contenedor tenga el tamaño correcto
      imageContainer.style.width = `${widthPx}px`;
@@ -313,6 +314,57 @@ function updateImageSize() {
 window.onload = updateImageSize;
 window.onresize = updateImageSize;
 
+
+function analyzeImagePixels(img) {
+  console.log("Dimensiones de la imagen:", img.naturalWidth, img.naturalHeight);
+
+  if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+    console.log("⚠️ La imagen aún no se ha cargado completamente.");
+    return;
+  }
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+
+  ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+
+  const imageData = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
+  const pixels = imageData.data;
+
+  console.log("Total de píxeles procesados:", pixels.length / 4);
+
+  predictRealSize(img.naturalWidth, img.naturalHeight);
+}
+
+function predictRealSize(width, height) {
+  console.log("Calculando tamaño real para:", width, height);
+
+  const factorX = 0.0169;   
+  const factorY = 0.0169;
+
+  const realWidth = (width * factorX).toFixed(1);
+  const realHeight = (height * factorY).toFixed(1);
+
+  console.log(`Tamaño estimado en cm: ${realWidth} x ${realHeight}`);
+}
+
+window.onload = function () {
+  const uploadedImage = document.getElementById("uploaded-image");
+
+  if (uploadedImage.complete && uploadedImage.naturalWidth > 0) {
+    console.log("✅ La imagen ya estaba cargada.");
+    updateImageSize();
+  } else {
+    console.log("⌛ Esperando a que la imagen se cargue...");
+    uploadedImage.onload = function () {
+      console.log("✅ Imagen cargada.");
+      updateImageSize();
+    };
+  }
+};
 
 // Llamar a la función para inicializar
 uploadImage();

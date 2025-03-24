@@ -40,34 +40,36 @@ function initializeIOSPicker(pickerId) {
 
   // No seleccionar ningún elemento al inicio
   pickerItems.forEach(i => i.classList.remove('selected'));
+  //pickerItems[0].classList.add('selected');
+  //highlightVisibleItem(picker, pickerItems);
 
   // Evento de scroll para detectar el elemento más cercano
   picker.addEventListener('scroll', function () {
-    console.log('Scroll event triggered'); // Depuración
-    highlightVisibleItem(picker, pickerItems);
+    setTimeout(() => {
+      highlightVisibleItem(picker, pickerItems);
+      ensureBoundary(picker, pickerItems);
+    }, 100);
   });
 
   // Evento de clic en los elementos
   pickerItems.forEach(item => {
     item.addEventListener('click', function () {
-      console.log('Item clicked:', item.textContent); // Depuración
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
-      updateImageSize(); // Actualizar el tamaño de la imagen
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      updateImageSize();
     });
   });
 
-  // Evitar que seleccione automáticamente el primer elemento
-  /* setTimeout(function () {
-    if (pickerItems.length > 0) {
-      pickerItems[0].scrollIntoView({ block: 'center' });
-      updateImageSize(); // Esto solo se activará si hay un seleccionado
-      pickerItems[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
-    }
-  }, 100); */
+  picker.addEventListener('wheel', function (event) {
+    event.preventDefault();
+    picker.scrollTop += event.deltaY;
+    setTimeout(() => {
+      highlightVisibleItem(picker, pickerItems);
+      ensureBoundary(picker, pickerItems);
+    }, 200);
+  });
 }
-
 
 function highlightVisibleItem(picker, items) {
   const pickerRect = picker.getBoundingClientRect();
@@ -99,6 +101,21 @@ function highlightVisibleItem(picker, items) {
   if (closestItem) {
     items.forEach(item => item.classList.remove('selected'));
     closestItem.classList.add('selected');
+  }
+}
+
+function ensureBoundary(picker, items) {
+  const firstItem = items[0];
+  const lastItem = items[items.length - 1];
+
+  if (picker.scrollTop <= 0) {
+    items.forEach(item => item.classList.remove('selected'));
+    firstItem.classList.add('selected');
+    firstItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  } else if (picker.scrollTop + picker.clientHeight >= picker.scrollHeight - firstItem.clientHeight) {
+    items.forEach(item => item.classList.remove('selected'));
+    lastItem.classList.add('selected');
+    lastItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
 }
 

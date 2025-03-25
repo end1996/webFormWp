@@ -691,3 +691,17 @@ input.error, textarea.error {
   margin-top: 0;
 }
 
+/* Mostrar la notificación */
+.notification.show {
+  opacity: 1;
+}
+
+/* Estilo específico para dispositivos móviles */
+@media (max-width: 768px) {
+  .notification {
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+    max-width: 80%;
+  }
+}

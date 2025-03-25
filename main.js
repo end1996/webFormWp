@@ -34,16 +34,14 @@ function initializeVerticalPicker(pickerId) {
 
   // Configuración inicial
   pickerItems.forEach(i => i.classList.remove('selected'));
-  
-  // Evento de scroll
-  picker.addEventListener('scroll', function() {
-    highlightVerticalItem(picker, pickerItems);
-    ensureVerticalBoundary(picker, pickerItems);
-  });
 
   // Evento de clic
   pickerItems.forEach(item => {
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function () {
+      if (!uploadedImageData) {
+        showNotification('Por favor, sube una imagen primero.', 'error');
+        return;
+      }
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -51,8 +49,14 @@ function initializeVerticalPicker(pickerId) {
     });
   });
 
+  // Evento de scroll
+  picker.addEventListener('scroll', function () {
+    highlightVerticalItem(picker, pickerItems);
+    ensureVerticalBoundary(picker, pickerItems);
+  });
+
   // Evento de rueda del mouse
-  picker.addEventListener('wheel', function(event) {
+  picker.addEventListener('wheel', function (event) {
     event.preventDefault();
     picker.scrollTop += event.deltaY;
   });
@@ -67,16 +71,14 @@ function initializeHorizontalPicker(pickerId) {
 
   // Configuración inicial
   pickerItems.forEach(i => i.classList.remove('selected'));
-  
-  // Evento de scroll
-  picker.addEventListener('scroll', function() {
-    highlightHorizontalItem(picker, pickerItems);
-    ensureHorizontalBoundary(picker, pickerItems);
-  });
 
   // Evento de clic
   pickerItems.forEach(item => {
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function () {
+      if (!uploadedImageData) {
+        showNotification('Por favor, sube una imagen primero.', 'error');
+        return;
+      }
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
       item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
@@ -84,13 +86,18 @@ function initializeHorizontalPicker(pickerId) {
     });
   });
 
+  // Evento de scroll
+  picker.addEventListener('scroll', function () {
+    highlightHorizontalItem(picker, pickerItems);
+    ensureHorizontalBoundary(picker, pickerItems);
+  });
+
   // Evento de rueda del mouse
-  picker.addEventListener('wheel', function(event) {
+  picker.addEventListener('wheel', function (event) {
     event.preventDefault();
     picker.scrollLeft += event.deltaY;
   });
 }
-
 // Funciones específicas para el picker vertical
 function highlightVerticalItem(picker, items) {
   const pickerRect = picker.getBoundingClientRect();
@@ -607,22 +614,3 @@ function hideLoadingIndicator() {
   }
 }
 
-function showAlert(message) {
-  //crear el contenedor del mensaje (modal)
-  const alertModal = document.createElement('div');
-  alertModal.className = 'alert-modal';
-  alertModal.innerHTML = `
-    <div class="alert-content">
-      <p>${message}</p>
-      <button class="close-alert-btn">Cerrar</button>
-    </div>
-  `;
-
-  //agregar el modal al cuerpo del coumento
-  document.body.appendChild(alertModal);
-
-  //cierra el modal al hacer clic en el botón
-  alertModal.querySelector('.alert-close-btn').addEventListener('click', () => {
-    document.body.removeChild(alertModal);
-  });
-}

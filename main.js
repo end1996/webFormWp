@@ -127,7 +127,7 @@ function toggleSizeOptions(type) {
     document.getElementById('standard-sizes').style.display = 'none';
     document.getElementById('custom-size').style.display = 'flex';
   }
-  updateImageSize(); // Actualizar el tamaño de la imagen
+  //updateImageSize(); // Actualizar el tamaño de la imagen
 }
 
 function toggleFrameOptions(show) {
@@ -274,13 +274,29 @@ window.removeUploadedImage = () => {
   });
 }
 
+// Objeto para almacenar los tamaños ya calculados (caché)
+const sizeCache = {};
+
 function updateImageSize() {
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
   const uploadedImage = document.getElementById("uploaded-image");
   const uploadArea = document.querySelector('.upload-area');
   const container = uploadedImage.parentElement; // Contenedor de la imagen
 
-  if (selectedSize && uploadedImage) {
+  if (!selectedSize || !uploadedImage || !container) {
+    console.log("⚠️ No se puede actualizar el tamaño de la imagen. Datos faltantes.");
+    return;
+  }
+
+  // Si el tamaño ya está en caché, aplicamos los valores guardados
+  if (sizeCache[selectedSize]) {
+    const { width, height } = sizeCache[selectedSize];
+    uploadedImage.style.width = `${width}px`;
+    uploadedImage.style.height = `${height}px`;
+    console.log("↩️ Tamaño recuperado de caché:", { width, height });
+    return;
+  }
+
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
 
     // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
@@ -298,7 +314,7 @@ function updateImageSize() {
     const maxContainerHeight = container.clientHeight;
 
     console.log('Dimensiones:', {
-      deseado: { desiredWidthPx, desiredHeightPx },
+      deseado: { desiredWidthPx, desiredHeightPx }, // 1270 X 746
       máximoNatural: { maxNaturalWidth, maxNaturalHeight },
       contenedor: { maxContainerWidth, maxContainerHeight }
     });
@@ -321,6 +337,9 @@ function updateImageSize() {
     const finalWidth = desiredWidthPx * scaleFactor;
     const finalHeight = desiredHeightPx * scaleFactor;
 
+    // Guardamos en caché
+    sizeCache[selectedSize] = { width: finalWidth, height: finalHeight };
+
     // 5. Aplicación de estilos optimizada
     uploadedImage.style.width = `${finalWidth}px`;
     uploadedImage.style.height = `${finalHeight}px`;
@@ -329,13 +348,8 @@ function updateImageSize() {
     uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
     uploadedImage.style.display = 'block';
 
-    console.log('Tamaño final aplicado:', { finalWidth, finalHeight });
+  console.log('✅ Tamaño calculado y guardado en caché:', { finalWidth, finalHeight });
   }
-}
-// Llamar a la función cuando cambie el tamaño de la ventana
-window.onload = updateImageSize;
-window.onresize = updateImageSize;
-
 
 function analyzeImagePixels(img) {
 
@@ -377,13 +391,13 @@ window.onload = function () {
 
   if (uploadedImage.complete && uploadedImage.naturalWidth > 0) {
     console.log("✅ La imagen ya estaba cargada.");
-    updateImageSize();
+    //updateImageSize();
   } else {
     console.log("⌛ Esperando a que la imagen se cargue...");
     uploadedImage.onload = function () {
       console.log("✅ Imagen cargada.");
       analyzeImagePixels(uploadedImage);
-      updateImageSize();
+      //updateImageSize();
     };
   }
 };

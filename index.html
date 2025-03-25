@@ -29,7 +29,7 @@
         <div class="remove-image-btn-container">
             <button id="remove-image-btn" class="remove-image-btn" style="display: none;">Eliminar imagen</button>
         </div>
-        
+
         <div class="section">
             <div class="section-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -128,31 +128,33 @@
                 </div>
             </div>
             <div id="frame-picker-container" class="frame-ios-picker-container">
-                <div class="frame-ios-picker-highlight"></div>
-                <button class="arrow-button arrow-left" onclick="scrollLeftHandler()">❮</button>
-                <div class="frame-ios-picker" id="frame-picker">
-                    <div class="frame-ios-picker-item" data-value="frame1">
-                        <div class="frame-thumbnail">
-                            <img src="assets/frames/marco1.png" alt="Marco 1" height="80" />
+                <button class="arrow-button arrow-left" onclick="scrollLeftHandler()">〈</button>
+                <div class="frame-ios-picker-wrapper">
+                    <div class="frame-ios-picker-highlight"></div>
+                    <div class="frame-ios-picker" id="frame-picker">
+                        <div class="frame-ios-picker-item" data-value="frame1">
+                            <div class="frame-thumbnail">
+                                <img src="assets/frames/marco1.png" alt="Marco 1" height="80" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="frame-ios-picker-item" data-value="frame2">
-                        <div class="frame-thumbnail">
-                            <img src="assets/frames/marco2.png" alt="Marco 2" height="80" />
+                        <div class="frame-ios-picker-item" data-value="frame2">
+                            <div class="frame-thumbnail">
+                                <img src="assets/frames/marco2.png" alt="Marco 2" height="80" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="frame-ios-picker-item" data-value="frame3">
-                        <div class="frame-thumbnail">
-                            <img src="assets/frames/marco3.png" alt="Marco 3" height="80" />
+                        <div class="frame-ios-picker-item" data-value="frame3">
+                            <div class="frame-thumbnail">
+                                <img src="assets/frames/marco3.png" alt="Marco 3" height="80" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="frame-ios-picker-item" data-value="frame4">
-                        <div class="frame-thumbnail">
-                            <img src="assets/frames/marco4.png" alt="Marco 4" height="80" />
+                        <div class="frame-ios-picker-item" data-value="frame4">
+                            <div class="frame-thumbnail">
+                                <img src="assets/frames/marco4.png" alt="Marco 4" height="80" />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button class="arrow-button arrow-right" onclick="scrollRightHandler()">❯</button>
+                <button class="arrow-button arrow-right" onclick="scrollRightHandler()">〉</button>
             </div>
         </div>
     </div>

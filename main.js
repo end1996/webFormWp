@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Initialize iOS-style size picker
-  const sizePicker = document.getElementById('size-picker');
-  if (sizePicker) {
-    initializeIOSPicker('size-picker');
-  } else {
-    console.error('Size picker not found');
-  }
+ // Initialize size picker (vertical)
+ const sizePicker = document.getElementById('size-picker');
+ if (sizePicker) {
+   initializeVerticalPicker('size-picker');
+ } else {
+   console.error('Size picker not found');
+ }
 
-  // Initialize iOS-style frame picker
-  const framePicker = document.getElementById('frame-picker');
-  if (framePicker) {
-    initializeIOSPicker('frame-picker');
-  } else {
-    console.error('Frame picker not found');
-  }
+ // Initialize frame picker (horizontal)
+ const framePicker = document.getElementById('frame-picker');
+ if (framePicker) {
+   initializeHorizontalPicker('frame-picker');
+ } else {
+   console.error('Frame picker not found');
+ }
 
   // Initialize the upload functionality
   uploadImage();
@@ -25,35 +25,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-function initializeIOSPicker(pickerId) {
+function initializeVerticalPicker(pickerId) {
   const picker = document.getElementById(pickerId);
-  if (!picker) {
-    console.error('Picker not found:', pickerId);
-    return;
-  }
+  if (!picker) return;
 
-  const pickerItems = picker.querySelectorAll('.ios-picker-item, .frame-ios-picker-item');
-  if (pickerItems.length === 0) {
-    console.error('No picker items found in:', pickerId);
-    return;
-  }
+  const pickerItems = picker.querySelectorAll('.ios-picker-item');
+  if (pickerItems.length === 0) return;
 
-  // No seleccionar ningún elemento al inicio
+  // Configuración inicial
   pickerItems.forEach(i => i.classList.remove('selected'));
-  //pickerItems[0].classList.add('selected');
-  //highlightVisibleItem(picker, pickerItems);
-
-  // Evento de scroll para detectar el elemento más cercano
-  picker.addEventListener('scroll', function () {
-    setTimeout(() => {
-      highlightVisibleItem(picker, pickerItems);
-      ensureBoundary(picker, pickerItems);
-    }, 100);
+  
+  // Evento de scroll
+  picker.addEventListener('scroll', function() {
+    highlightVerticalItem(picker, pickerItems);
+    ensureVerticalBoundary(picker, pickerItems);
   });
 
-  // Evento de clic en los elementos
+  // Evento de clic
   pickerItems.forEach(item => {
-    item.addEventListener('click', function () {
+    item.addEventListener('click', function() {
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -61,17 +51,48 @@ function initializeIOSPicker(pickerId) {
     });
   });
 
-  picker.addEventListener('wheel', function (event) {
+  // Evento de rueda del mouse
+  picker.addEventListener('wheel', function(event) {
     event.preventDefault();
     picker.scrollTop += event.deltaY;
-    setTimeout(() => {
-      highlightVisibleItem(picker, pickerItems);
-      ensureBoundary(picker, pickerItems);
-    }, 200);
   });
 }
 
-function highlightVisibleItem(picker, items) {
+function initializeHorizontalPicker(pickerId) {
+  const picker = document.getElementById(pickerId);
+  if (!picker) return;
+
+  const pickerItems = picker.querySelectorAll('.frame-ios-picker-item');
+  if (pickerItems.length === 0) return;
+
+  // Configuración inicial
+  pickerItems.forEach(i => i.classList.remove('selected'));
+  
+  // Evento de scroll
+  picker.addEventListener('scroll', function() {
+    highlightHorizontalItem(picker, pickerItems);
+    ensureHorizontalBoundary(picker, pickerItems);
+  });
+
+  // Evento de clic
+  pickerItems.forEach(item => {
+    item.addEventListener('click', function() {
+      pickerItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+      updateFrameSelection();
+    });
+  });
+
+  // Evento de rueda del mouse
+  picker.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    picker.scrollLeft += event.deltaY;
+  });
+}
+
+// Funciones específicas para el picker vertical
+function highlightVerticalItem(picker, items) {
   const pickerRect = picker.getBoundingClientRect();
   const middlePosition = pickerRect.top + pickerRect.height / 2;
 
@@ -89,12 +110,10 @@ function highlightVisibleItem(picker, items) {
     }
   });
 
-  const pickerHighlight = picker.querySelector('.ios-picker-highlight');
+  const pickerHighlight = picker.parentElement.querySelector('.ios-picker-highlight');
   if (pickerHighlight && closestItem) {
     const closestItemRect = closestItem.getBoundingClientRect();
-    const itemMiddle = closestItemRect.top + closestItemRect.height / 2;
-
-    pickerHighlight.style.top = itemMiddle - pickerRect.top - (pickerHighlight.offsetHeight / 2) + 'px';
+    pickerHighlight.style.top = (closestItemRect.top - pickerRect.top) + 'px';
     pickerHighlight.style.height = closestItemRect.height + 'px';
   }
 
@@ -104,18 +123,76 @@ function highlightVisibleItem(picker, items) {
   }
 }
 
-function ensureBoundary(picker, items) {
+function ensureVerticalBoundary(picker, items) {
   const firstItem = items[0];
   const lastItem = items[items.length - 1];
 
   if (picker.scrollTop <= 0) {
     items.forEach(item => item.classList.remove('selected'));
     firstItem.classList.add('selected');
-    firstItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  } else if (picker.scrollTop + picker.clientHeight >= picker.scrollHeight - firstItem.clientHeight) {
+  } else if (picker.scrollTop + picker.clientHeight >= picker.scrollHeight - 1) {
     items.forEach(item => item.classList.remove('selected'));
     lastItem.classList.add('selected');
-    lastItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+
+// Funciones específicas para el picker horizontal
+function highlightHorizontalItem(picker, items) {
+  const pickerRect = picker.getBoundingClientRect();
+  const middlePosition = pickerRect.left + pickerRect.width / 2;
+
+  let closestItem = null;
+  let closestDistance = Infinity;
+
+  items.forEach(item => {
+    const itemRect = item.getBoundingClientRect();
+    const itemMiddle = itemRect.left + itemRect.width / 2;
+    const distance = Math.abs(itemMiddle - middlePosition);
+
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestItem = item;
+    }
+  });
+
+  const pickerHighlight = picker.parentElement.querySelector('.frame-ios-picker-highlight');
+  if (pickerHighlight && closestItem) {
+    const closestItemRect = closestItem.getBoundingClientRect();
+    pickerHighlight.style.left = (closestItemRect.left - pickerRect.left) + 'px';
+    pickerHighlight.style.width = closestItemRect.width + 'px';
+  }
+
+  if (closestItem) {
+    items.forEach(item => item.classList.remove('selected'));
+    closestItem.classList.add('selected');
+  }
+}
+
+function ensureHorizontalBoundary(picker, items) {
+  const firstItem = items[0];
+  const lastItem = items[items.length - 1];
+
+  if (picker.scrollLeft <= 0) {
+    items.forEach(item => item.classList.remove('selected'));
+    firstItem.classList.add('selected');
+  } else if (picker.scrollLeft + picker.clientWidth >= picker.scrollWidth - 1) {
+    items.forEach(item => item.classList.remove('selected'));
+    lastItem.classList.add('selected');
+  }
+}
+
+// Función para los botones de flecha (si los necesitas)
+function scrollLeftHandler() {
+  const framePicker = document.getElementById('frame-picker');
+  if (framePicker) {
+    framePicker.scrollBy({ left: -100, behavior: 'smooth' });
+  }
+}
+
+function scrollRightHandler() {
+  const framePicker = document.getElementById('frame-picker');
+  if (framePicker) {
+    framePicker.scrollBy({ left: 100, behavior: 'smooth' });
   }
 }
 
@@ -132,32 +209,6 @@ function toggleSizeOptions(type) {
 
 function toggleFrameOptions(show) {
   document.getElementById('frame-picker-container').style.display = show ? 'block' : 'none';
-}
-
-function scrollLeftHandler() {
-  const picker = document.getElementById('frame-picker');
-  const itemWidth = picker.querySelector('.frame-ios-picker-item').offsetWidth; 
-  const currentScroll = picker.scrollLeft; 
-
-  if (currentScroll > 0) {
-    picker.scrollBy({
-      left: -itemWidth, 
-      behavior: 'smooth'
-    });
-  }
-}
-
-function scrollRightHandler() {
-  const picker = document.getElementById('frame-picker');
-  const itemWidth = picker.querySelector('.frame-ios-picker-item').offsetWidth; 
-  const maxScroll = picker.scrollWidth - picker.clientWidth; 
-
-  if (picker.scrollLeft < maxScroll) {
-    picker.scrollBy({
-      left: itemWidth,
-      behavior: 'smooth'
-    });
-  }
 }
 
 // Variables globales para almacenar la imagen

@@ -214,87 +214,80 @@ body {
   
 /* Frame picker styles */
 .frame-ios-picker-container {
-position: relative;
-height: 90px;
-overflow: hidden;
-border: 0px solid #dee2e6;
-border-radius: 8px;
-margin-top: 10px;
-margin-bottom: 10px;
-background-color: #f8f9fa;
-display: block;
-width: 50%;
-margin: 10px auto;
-padding: 9px 0; 
-}
-
-/* contenedor de las imagenes */
-.frame-ios-picker-wrapper {
-position: relative;
-overflow-x: auto; /* Permite el scroll horizontal */
-white-space: nowrap;
-padding: 50px ;
-display: flex;
-justify-content: center;
-background-color: #ffffff;
-height: 5px;
-border-radius: 15px;
-width: 53%;
-margin: 0 auto;
-}
-
-.frame-ios-picker {
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-overflow-y: scroll;
--webkit-overflow-scrolling: touch;
-padding: 28px ;
-display: flex;
-flex-wrap: nowrap;
-}
-.frame-ios-picker::-webkit-scrollbar {
-display: none;
-}
-
-.frame-ios-picker-item {
-height: 75px; 
-line-height: 160px; 
-text-align: center;
-display: flex;
-align-items: center;
-justify-content: center;
-
-
-}
-
-.frame-ios-picker-item.selected {
-background-color: rgba(231, 111, 81, 0.1);
-}
-/* sombra de scroll */
-.frame-ios-picker-highlight {
-position: absolute;
-top: 30px;
-left: 0;
-right: 0;
-height: 0;
-pointer-events: none;
-box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
-background-color: rgba(255, 255, 255, 0.7);
-transition: height 0.3s ease, top 0.3s ease;
-scroll-snap-type: y mandatory;
-}
-
-.frame-thumbnail {
-width: 140px;
-height: 50px;
-margin: 0 auto;
-display: flex;
-align-items: center;
-justify-content: center;
-}
+  position: relative;
+  height: auto;
+  border: 0px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  display: block;
+  width: 50%;
+  margin: 10px auto;
+  padding: 9px 0; 
+  }
+  
+  /* contenedor de las imagenes */
+  .frame-ios-picker-wrapper {
+  position: relative;
+  overflow-x: auto; /* Permite el scroll horizontal */
+  white-space: nowrap;
+  padding: 50px ;
+  display: flex;
+  justify-content: center;
+  background-color: #ffffff;
+  height: 50px;
+  border-radius: 15px;
+  width: 53%;
+  margin: 0 auto;
+  }
+  
+  .frame-ios-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding: 28px ;
+  display: flex;
+  flex-wrap: nowrap;
+  }
+  .frame-ios-picker::-webkit-scrollbar {
+  display: none;
+  }
+  
+  .frame-ios-picker-item {
+  height: 100px;
+  /*line-height: 160px; */
+  display: flex;
+  align-items: center;
+  }
+  
+  .frame-ios-picker-item.selected {
+  background-color: rgba(231, 111, 81, 0.1);
+  }
+  /* sombra de scroll */
+  .frame-ios-picker-highlight {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 0;
+  pointer-events: none;
+  box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
+  background-color: rgba(255, 255, 255, 0.7);
+  transition: height 0.3s ease, top 0.3s ease;
+  scroll-snap-type: y mandatory;
+  }
+  
+  .frame-thumbnail {
+  width: 140px;
+  height: 50px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  } 
 /* Estilo de las flechas de navegación */
 .arrow-button {
 position: absolute;
@@ -697,3 +690,4 @@ input.error, textarea.error {
   color: #4CAF50;
   margin-top: 0;
 }
+

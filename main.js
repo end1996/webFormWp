@@ -272,6 +272,7 @@ window.removeUploadedImage = () => {
     const buttonElement = document.querySelector('.upload-btn');
     const uploadArea = document.querySelector('.upload-area');
     const imageContainer = document.querySelector('.image-container');
+    const fileInput = document.getElementById('file-input');
 
     // Ocultar la imagen y el botón de eliminar
     uploadedImage.src = "";
@@ -284,6 +285,11 @@ window.removeUploadedImage = () => {
     buttonElement.style.display = "";
     uploadArea.style.padding = "5px";
     imageContainer.style.padding = "5px";
+
+    // Reincia el valor del input de archivo
+    if (fileInput) {
+      fileInput.value = ''; // Limpiar el valor del input de archivo
+    }
 };
 
 
@@ -599,4 +605,24 @@ function hideLoadingIndicator() {
     loadingOverlay.classList.remove('show');
     setTimeout(() => document.body.removeChild(loadingOverlay), 300);
   }
+}
+
+function showAlert(message) {
+  //crear el contenedor del mensaje (modal)
+  const alertModal = document.createElement('div');
+  alertModal.className = 'alert-modal';
+  alertModal.innerHTML = `
+    <div class="alert-content">
+      <p>${message}</p>
+      <button class="close-alert-btn">Cerrar</button>
+    </div>
+  `;
+
+  //agregar el modal al cuerpo del coumento
+  document.body.appendChild(alertModal);
+
+  //cierra el modal al hacer clic en el botón
+  alertModal.querySelector('.alert-close-btn').addEventListener('click', () => {
+    document.body.removeChild(alertModal);
+  });
 }

@@ -222,35 +222,35 @@ body {
   display: block;
   width: 50%;
   margin: 10px auto;
-  padding: 9px 0; 
+  padding: 5px 10px; 
   }
   
-  /* contenedor de las imagenes */
-  .frame-ios-picker-wrapper {
+/* Contenedor de las imágenes - modificado */
+.frame-ios-picker-wrapper {
   position: relative;
   overflow-x: auto; /* Permite el scroll horizontal */
   white-space: nowrap;
-  padding: 50px ;
+  padding: 10px 0; /* Reducido el padding vertical */
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* Cambiado de center a flex-start para mejor scroll */
+  align-items: center; /* Centra verticalmente los items */
   background-color: #ffffff;
-  height: 50px;
+  height: 100px; /* Aumentado para acomodar mejor las imágenes */
   border-radius: 15px;
-  width: 53%;
+  width: calc(100% - 20px); /* Ajustado el ancho */ 
   margin: 0 auto;
-  }
+  scroll-snap-type: x mandatory; /* Para un scroll más preciso */
+}
   
   .frame-ios-picker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  padding: 28px ;
   display: flex;
   flex-wrap: nowrap;
+  height: 100%;
+  align-items: center; /* Centra verticalmente */
+  padding: 0 20px; /* Padding lateral reducido */
+  gap: 15px; /* Espacio entre items */
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   }
   .frame-ios-picker::-webkit-scrollbar {
   display: none;
@@ -387,10 +387,6 @@ left: -16px;
       height: 28px;
     }
 
-    .ios-picker-container {
-      width: 100%;
-    }
-
     .custom-size {
       width: 100%;
       padding: 0;
@@ -400,7 +396,7 @@ left: -16px;
     .custom-size input {
       max-width: 40%;
     }
-  
+
     .submit-btn {
       padding: 10px;
       font-size: 0.875rem;

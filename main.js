@@ -291,6 +291,8 @@ window.removeUploadedImage = () => {
     paragraphElement.style.display = "";
     buttonElement.style.display = "";
     uploadArea.style.padding = "5px";
+    uploadArea.style.marginLeft = "auto";
+    uploadArea.style.marginRight = "auto";
     imageContainer.style.padding = "5px";
 
     // Reincia el valor del input de archivo

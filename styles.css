@@ -28,6 +28,8 @@ body {
     overflow: hidden;
     /*height: 60vh;*/
     align-items: center;
+    margin-left: auto; /* Centrar el contenedor horizontalmente */
+    margin-right: auto;
   }
   
   .upload-area:hover {
@@ -143,7 +145,7 @@ body {
     border-radius: 8px;
     margin-top: 10px;
     background-color: #f8f9fa;
-    width: 105%; /* Establecer un ancho fijo o relativo */
+    width: 100%; /* Establecer un ancho fijo o relativo */
     margin-left: auto; /* Centrar el contenedor horizontalmente */
     margin-right: auto;
   }

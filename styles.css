@@ -213,17 +213,18 @@ body {
   }
   
 /* Frame picker styles */
-.frame-ios-picker-container {
+/*.frame-ios-picker-container {
   position: relative;
   height: auto;
   border: 0px solid #dee2e6;
   border-radius: 8px;
   background-color: #f8f9fa;
-  display: block;
+  display: flex;
+  justify-content: center;
   width: 50%;
   margin: 10px auto;
   padding: 5px 10px; 
-  }
+  }*/
   
 /* Contenedor de las imágenes - modificado */
 .frame-ios-picker-wrapper {
@@ -237,30 +238,42 @@ body {
   background-color: #ffffff;
   height: 100px; /* Aumentado para acomodar mejor las imágenes */
   border-radius: 15px;
-  width: calc(100% - 20px); /* Ajustado el ancho */ 
+  width: 60%; /* Ajustado el ancho */ 
   margin: 0 auto;
   scroll-snap-type: x mandatory; /* Para un scroll más preciso */
 }
   
-  .frame-ios-picker {
+.frame-ios-picker {
   display: flex;
   flex-wrap: nowrap;
   height: 100%;
-  align-items: center; /* Centra verticalmente */
-  padding: 0 20px; /* Padding lateral reducido */
-  gap: 15px; /* Espacio entre items */
-  overflow-y: scroll;
+  align-items: center;
+  /*justify-content: flex-start;*/
+  gap: 15px;
+  overflow-x: auto; /* Cambiar a scroll horizontal si es necesario */
   -webkit-overflow-scrolling: touch;
-  }
+  width: 100%; /* Ajusta el ancho al 100% del contenedor */
+  max-width: 100%; /* Asegúrate de que no exceda el ancho del contenedor padre */
+}
   .frame-ios-picker::-webkit-scrollbar {
-  display: none;
+   display: none;
+  }
+
+  .frame-ios-picker-wrapper {
+    scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
+    -ms-overflow-style: none; /* Oculta la barra de scroll en Internet Explorer y Edge */
   }
   
   .frame-ios-picker-item {
-  height: 100px;
-  /*line-height: 160px; */
-  display: flex;
-  align-items: center;
+    flex: 0 0 80%; /* Los elementos ocupan el 80% del ancho del contenedor */
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center; /* Alinea el elemento al centro */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   .frame-ios-picker-item.selected {
@@ -268,11 +281,11 @@ body {
   }
   /* sombra de scroll */
   .frame-ios-picker-highlight {
-  position: absolute;
-  top: 30px;
+  /*position: absolute;
+  top: 50px;
   left: 0;
   right: 0;
-  height: 0;
+  height: 0;*/
   pointer-events: none;
   box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
   background-color: rgba(255, 255, 255, 0.7);
@@ -281,8 +294,8 @@ body {
   }
   
   .frame-thumbnail {
-  width: 140px;
-  height: 50px;
+  /*width: 100px;*/
+  /*height: 50px;*/
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -303,11 +316,11 @@ font-size: 2rem;
 }
 /* Posición inicial en la izquierda */
 .arrow-left {
-left: -16px; 
+left: 80px; 
 }
 /* Posición inicial en la derecha */
 .arrow-right {
-  right: -16px; 
+  right: -40px; 
   }
 
 @keyframes show{
@@ -397,15 +410,14 @@ left: -16px;
       max-width: 40%;
     }
 
-    .submit-btn {
-      padding: 10px;
-      font-size: 0.875rem;
-    }
-
     .comment-area {
       min-height: 120px;
       width: calc(100% - 20px);
       padding-right: 15px; /* Ajustar espacio al lado derecho para pantallas más pequeñas */
+    }
+
+    .frame-ios-picker-wrapper {
+      width: 50%;
     }
   }
   

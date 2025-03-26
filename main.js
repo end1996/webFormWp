@@ -215,7 +215,7 @@ function toggleSizeOptions(type) {
 }
 
 function toggleFrameOptions(show) {
-  document.getElementById('frame-picker-container').style.display = show ? 'block' : 'none';
+  document.getElementById('frame-ios-picker-wrapper').style.display = show ? 'flex' : 'none';
 }
 
 // Variables globales para almacenar la imagen

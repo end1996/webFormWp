@@ -504,7 +504,8 @@ function addToCart() {
   }
 
   // Obtener los valores del formulario
-  const quantity = document.querySelector('#quantity-input').value;
+  const quantity = document.querySelector('.quantity-field').value;
+  console.log(quantity)
   const isCustomSize = document.querySelector('input[name="size-type"]:checked').value === 'custom';
 
   let size, customWidth, customHeight;

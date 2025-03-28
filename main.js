@@ -348,8 +348,10 @@ function updateImageSize() {
   const uploadedImage = document.getElementById("uploaded-image");
   const uploadArea = document.querySelector('.upload-area');
   const container = uploadedImage.parentElement; // Contenedor de la imagen
+  const widthInput = document.getElementById("custom-size__width");
+  const heightInput = document.getElementById("custom-size__height");
 
-  if (!selectedSize || !uploadedImage || !container) {
+  if (!selectedSize || !uploadedImage || !container || !widthInput || !heightInput) {
     console.log("⚠️ No se puede actualizar el tamaño de la imagen. Datos faltantes.");
     return;
   }
@@ -364,6 +366,8 @@ function updateImageSize() {
   }
 
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
+    widthInput.value = widthCm;
+    heightInput.value = heightCm;
 
     // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
     const cmToPx = 40; // Ajustado para evitar dimensiones excesivas
@@ -417,6 +421,10 @@ function updateImageSize() {
   console.log('✅ Tamaño calculado y guardado en caché:', { finalWidth, finalHeight });
   }
 
+  // Agregar eventos a los inputs personalizados para actualizar en tiempo real
+document.getElementById("custom-size__width").addEventListener("input", updateImageSize);
+document.getElementById("custom-size__height").addEventListener("input", updateImageSize);
+  
 function analyzeImagePixels(img) {
 
   if (img.naturalWidth === 0 || img.naturalHeight === 0) {
@@ -510,9 +518,10 @@ function addToCart() {
 
   let size, customWidth, customHeight;
   if (isCustomSize) {
-    const customSizeInputs = document.querySelectorAll('#custom-size input');
-    customWidth = customSizeInputs[0].value;
-    customHeight = customSizeInputs[1].value;
+    customWidth = document.getElementById('custom-size__width').value;
+    console.log(customWidth);
+    customHeight = document.getElementById('custom-size__height').value;
+    console.log(customHeight);
 
     if (!customWidth || !customHeight) {
       showNotification('Por favor, ingresa las dimensiones personalizadas.', 'error');

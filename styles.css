@@ -123,17 +123,17 @@ body {
   
   .quantity-field {
     display: flex;
-    align-items: center;
-    max-width: 120px;
+    max-width: 120px !important;
   }
   
   .quantity-field input {
     width: 40px;
     height: 32px;
-    text-align: center;
     border: 1px solid #dee2e6;
     border-radius: 4px;
     margin-left: 15px;
+    padding: 0;
+    text-align: center;
   }
   
   /* iOS-style picker for sizes */
@@ -238,9 +238,9 @@ body {
   justify-content: flex-start;
   align-items: center; /* Centra verticalmente los items */
   background-color: #ffffff;
-  height: 100px; /* Aumentado para acomodar mejor las imágenes */
+  height: 150px; /* Aumentado para acomodar mejor las imágenes */
   border-radius: 15px;
-  width: calc(60% - 5px); /* Ajustado el ancho */ 
+  width: calc(100% - 20px); /* Ajustado el ancho */
   margin: 0 auto;
   scroll-snap-type: x mandatory; /* Para un scroll más preciso */
   /*background-color: #005177;*/
@@ -384,11 +384,6 @@ body {
     .section-title {
       font-size: 1rem;
     }
-  
-    .quantity-field input {
-      width: 35px;
-      height: 28px;
-    }
 
     .custom-size {
       width: 100%;
@@ -407,8 +402,13 @@ body {
     }
 
     .frame-ios-picker-wrapper {
-      width: 80%;
+      width: calc(100vw - 20px); /* Ajustado el ancho */
     }
+
+    .frame-thumbnail {
+      width: calc(50vw - 50px);
+      /*padding: 20px;*/
+    } 
     
     .arrow-left {
       left: 70px;
@@ -433,10 +433,16 @@ body {
     .section-title {
       font-size: 0.875rem;
     }
-  
-    .quantity-field input {
-      width: 30px;
-      height: 24px;
+
+    .frame-ios-picker-wrapper {
+      width: calc(100vw - 20px); /* Ajustado el ancho */
+      height: 150px !important;
+    }
+
+    .frame-thumbnail {
+      width: calc(50vw - 80px);
+      max-height: 50px !important;
+      padding-bottom: 20px;
     }
   
     .add-to-cart-btn {

@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
- // Initialize size picker (vertical)
- const sizePicker = document.getElementById('size-picker');
- if (sizePicker) {
-   initializeVerticalPicker('size-picker');
- } else {
-   console.error('Size picker not found');
- }
+  // Initialize size picker (vertical)
+  const sizePicker = document.getElementById('size-picker');
+  if (sizePicker) {
+    initializeVerticalPicker('size-picker');
+  } else {
+    console.error('Size picker not found');
+  }
 
- // Initialize frame picker (horizontal)
- const framePicker = document.getElementById('frame-picker');
- if (framePicker) {
-   initializeHorizontalPicker('frame-picker');
- } else {
-   console.error('Frame picker not found');
- }
+  // Initialize frame picker (horizontal)
+  const framePicker = document.getElementById('frame-picker');
+  if (framePicker) {
+    initializeHorizontalPicker('frame-picker');
+  } else {
+    console.error('Frame picker not found');
+  }
 
   // Initialize the upload functionality
   uploadImage();
@@ -228,47 +228,47 @@ function uploadImage() {
     fileInput.click(); // Simula un clic en el input de archivo
   };
 
-    // Función para manejar el cambio de imagen
-    const handleImageChange = (file) => {
-      if (file) {
-        const reader = new FileReader(); // Crear un FileReader para leer el archivo
-        reader.onloadend = () => {
-          // Cuando la lectura termine, mostrar la imagen
-          const uploadedImage = document.getElementById('uploaded-image');
-          const uploadArea = document.querySelector('.upload-area');
-          const removeButton = document.querySelector('.remove-image-btn');
-          const removeButtonContainer = document.querySelector('.remove-image-btn-container');
-  
-          uploadedImage.src = reader.result;
-          uploadedImage.style.display = 'block'; 
-  
-          // Guardar la URL de la imagen en la variable global
-          uploadedImageData = reader.result;
-          
-          const svgElement = document.querySelector('.upload-area svg');
-          const paragraphElement = document.querySelector('.upload-area p');
-          const buttonElement = document.querySelector('.upload-btn');
-  
-          // Ocultar los elementos de carga
-          svgElement.style.display = 'none';
-          paragraphElement.style.display = 'none';
-          buttonElement.style.display = 'none';
-  
-          // Mostrar botón de eliminar imagen
-          removeButton.style.display = 'block';
-          removeButton.onclick = removeUploadedImage;
-  
-          // Ajustes de estilo al subir imagen
-          uploadArea.style.margin = '0';
-          uploadArea.style.padding = '0 15px';
-          removeButtonContainer.style.padding = '0 0 20px 0';
-        };
-        reader.readAsDataURL(file); // Leer el archivo como una URL de datos
-      }
+  // Función para manejar el cambio de imagen
+  const handleImageChange = (file) => {
+    if (file) {
+      const reader = new FileReader(); // Crear un FileReader para leer el archivo
+      reader.onloadend = () => {
+        // Cuando la lectura termine, mostrar la imagen
+        const uploadedImage = document.getElementById('uploaded-image');
+        const uploadArea = document.querySelector('.upload-area');
+        const removeButton = document.querySelector('.remove-image-btn');
+        const removeButtonContainer = document.querySelector('.remove-image-btn-container');
+
+        uploadedImage.src = reader.result;
+        uploadedImage.style.display = 'block';
+
+        // Guardar la URL de la imagen en la variable global
+        uploadedImageData = reader.result;
+
+        const svgElement = document.querySelector('.upload-area svg');
+        const paragraphElement = document.querySelector('.upload-area p');
+        const buttonElement = document.querySelector('.upload-btn');
+
+        // Ocultar los elementos de carga
+        svgElement.style.display = 'none';
+        paragraphElement.style.display = 'none';
+        buttonElement.style.display = 'none';
+
+        // Mostrar botón de eliminar imagen
+        removeButton.style.display = 'block';
+        removeButton.onclick = removeUploadedImage;
+
+        // Ajustes de estilo al subir imagen
+        uploadArea.style.margin = '0';
+        uploadArea.style.padding = '0 15px';
+        removeButtonContainer.style.padding = '0 0 20px 0';
+      };
+      reader.readAsDataURL(file); // Leer el archivo como una URL de datos
+    }
   };
 
   // Función para eliminar la imagen subida
-window.removeUploadedImage = () => {
+  window.removeUploadedImage = () => {
     uploadedImageData = null;
 
     // Restaurar visibilidad de los elementos originales
@@ -299,7 +299,7 @@ window.removeUploadedImage = () => {
     if (fileInput) {
       fileInput.value = ''; // Limpiar el valor del input de archivo
     }
-};
+  };
 
 
   // Función para manejar el evento "drop"
@@ -342,6 +342,7 @@ window.removeUploadedImage = () => {
 
 // Objeto para almacenar los tamaños ya calculados (caché)
 const sizeCache = {};
+const customCache = {};
 
 function updateImageSize() {
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
@@ -350,81 +351,115 @@ function updateImageSize() {
   const container = uploadedImage.parentElement; // Contenedor de la imagen
   const widthInput = document.getElementById("custom-size__width");
   const heightInput = document.getElementById("custom-size__height");
+  let customWidth = widthInput.value;
+  let customHeight = heightInput.value;
 
-  if (!selectedSize || !uploadedImage || !container || !widthInput || !heightInput) {
+  if (!uploadedImage || !container) {
     console.log("⚠️ No se puede actualizar el tamaño de la imagen. Datos faltantes.");
     return;
   }
 
-  // Si el tamaño ya está en caché, aplicamos los valores guardados
-  if (sizeCache[selectedSize]) {
-    const { width, height } = sizeCache[selectedSize];
-    uploadedImage.style.width = `${width}px`;
-    uploadedImage.style.height = `${height}px`;
-    console.log("↩️ Tamaño recuperado de caché:", { width, height });
-    return;
+  if (!customWidth || !customHeight) {
+    console.log("Rellene ambos campos para actualizar tamaño personalizado.")
   }
+
+  // Determinar si usamos tamaño predefinido o personalizado
+  const useCustomSize = !selectedSize && (customWidth > 10 && customHeight > 15);
+
+  // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
+  const cmToPx = 40; // Ajustado para evitar dimensiones excesivas
+  // Alternativa dinámica: const cmToPx = (96 * window.devicePixelRatio) / 2.54;
+
+  // 2. Tamaño deseado en píxeles
+  let desiredWidthPx;
+  let desiredHeightPx;
+
+  if (useCustomSize) {
+    // Validar campos personalizados
+    if (!customWidth && !customHeight) {
+      console.log("Rellene al menos un campo para tamaño personalizado.");
+      return;
+    }
+
+    // Si solo se especifica un valor, mantener la relación de aspecto
+    if (!customWidth || !customHeight) {
+      const aspectRatio = uploadedImage.naturalWidth / uploadedImage.naturalHeight;
+      if (customWidth) {
+        desiredWidthPx = customWidth * cmToPx;
+        desiredHeightPx = desiredWidthPx / aspectRatio;
+      } else {
+        desiredHeightPx = customHeight * cmToPx;
+        desiredWidthPx = desiredHeightPx * aspectRatio;
+      }
+    } else {
+      desiredWidthPx = customWidth * cmToPx;
+      desiredHeightPx = customHeight * cmToPx;
+    }
+  } else {
+    // Si el tamaño ya está en caché, aplicamos los valores guardados
+    if (sizeCache[selectedSize]) {
+      const { width, height } = sizeCache[selectedSize];
+      uploadedImage.style.width = `${width}px`;
+      uploadedImage.style.height = `${height}px`;
+      console.log("↩️ Tamaño recuperado de caché:", { width, height });
+      return;
+    }
 
     const [widthCm, heightCm] = selectedSize.split("X").map(Number);
-    widthInput.value = widthCm;
-    heightInput.value = heightCm;
-
-    // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
-    const cmToPx = 40; // Ajustado para evitar dimensiones excesivas
-    // Alternativa dinámica: const cmToPx = (96 * window.devicePixelRatio) / 2.54;
-
-    // 2. Tamaño deseado en píxeles
-    let desiredWidthPx = widthCm * cmToPx;
-    let desiredHeightPx = heightCm * cmToPx;
-
-    // 3. Límites físicos (tamaño original y contenedor)
-    const maxNaturalWidth = uploadedImage.naturalWidth;
-    const maxNaturalHeight = uploadedImage.naturalHeight;
-    const maxContainerWidth = container.clientWidth;
-    const maxContainerHeight = container.clientHeight;
-
-    console.log('Dimensiones:', {
-      deseado: { desiredWidthPx, desiredHeightPx }, // 1270 X 746
-      máximoNatural: { maxNaturalWidth, maxNaturalHeight },
-      contenedor: { maxContainerWidth, maxContainerHeight }
-    });
-
-    // 4. Ajuste inteligente de tamaño
-    const widthScaleFactor = Math.min(
-      1,
-      maxNaturalWidth / desiredWidthPx,
-      maxContainerWidth / desiredWidthPx
-    );
-    
-    const heightScaleFactor = Math.min(
-      1,
-      maxNaturalHeight / desiredHeightPx,
-      maxContainerHeight / desiredHeightPx
-    );
-
-    const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
-
-    const finalWidth = desiredWidthPx * scaleFactor;
-    const finalHeight = desiredHeightPx * scaleFactor;
-
-    // Guardamos en caché
-    sizeCache[selectedSize] = { width: finalWidth, height: finalHeight };
-
-    // 5. Aplicación de estilos optimizada
-    uploadedImage.style.width = `${finalWidth}px`;
-    uploadedImage.style.height = `${finalHeight}px`;
-    uploadedImage.style.maxWidth = '100%';
-    uploadedImage.style.maxHeight = '100%';
-    uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
-    uploadedImage.style.display = 'block';
-
-  console.log('✅ Tamaño calculado y guardado en caché:', { finalWidth, finalHeight });
+    desiredWidthPx = widthCm * cmToPx;
+    desiredHeightPx = heightCm * cmToPx;
   }
 
-  // Agregar eventos a los inputs personalizados para actualizar en tiempo real
+
+
+  // 3. Límites físicos (tamaño original y contenedor)
+  const maxNaturalWidth = uploadedImage.naturalWidth;
+  const maxNaturalHeight = uploadedImage.naturalHeight;
+  const maxContainerWidth = container.clientWidth;
+  const maxContainerHeight = container.clientHeight;
+
+  console.log('Dimensiones:', {
+    deseado: { desiredWidthPx, desiredHeightPx }, // 1270 X 746
+    máximoNatural: { maxNaturalWidth, maxNaturalHeight },
+    contenedor: { maxContainerWidth, maxContainerHeight }
+  });
+
+  // 4. Ajuste inteligente de tamaño
+  const widthScaleFactor = Math.min(
+    1,
+    maxNaturalWidth / desiredWidthPx,
+    maxContainerWidth / desiredWidthPx
+  );
+
+  const heightScaleFactor = Math.min(
+    1,
+    maxNaturalHeight / desiredHeightPx,
+    maxContainerHeight / desiredHeightPx
+  );
+
+  const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
+
+  const finalWidth = desiredWidthPx * scaleFactor;
+  const finalHeight = desiredHeightPx * scaleFactor;
+
+  // Guardamos en caché
+  sizeCache[selectedSize] = { width: finalWidth, height: finalHeight };
+
+  // 5. Aplicación de estilos optimizada
+  uploadedImage.style.width = `${finalWidth}px`;
+  uploadedImage.style.height = `${finalHeight}px`;
+  uploadedImage.style.maxWidth = '100%';
+  uploadedImage.style.maxHeight = '100%';
+  uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
+  uploadedImage.style.display = 'block';
+
+  console.log('✅ Tamaño calculado y guardado en caché:', { finalWidth, finalHeight });
+}
+
+// Agregar eventos a los inputs personalizados para actualizar en tiempo real
 document.getElementById("custom-size__width").addEventListener("input", updateImageSize);
 document.getElementById("custom-size__height").addEventListener("input", updateImageSize);
-  
+
 function analyzeImagePixels(img) {
 
   if (img.naturalWidth === 0 || img.naturalHeight === 0) {
@@ -451,7 +486,7 @@ function analyzeImagePixels(img) {
 function predictRealSize(width, height) {
   console.log("Calculando tamaño real para:", width, height);
 
-  const factorX = 0.0169;   
+  const factorX = 0.0169;
   const factorY = 0.0169;
 
   const realWidth = (width * factorX).toFixed(1);

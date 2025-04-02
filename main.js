@@ -1,3 +1,6 @@
+// Variable global para seleccion de tamaños
+var selectedOptionSize;
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize size picker (vertical)
   const sizePicker = document.getElementById('size-picker');
@@ -207,9 +210,11 @@ function toggleSizeOptions(type) {
   if (type === 'standard') {
     document.getElementById('standard-sizes').style.display = 'block';
     document.getElementById('custom-size').style.display = 'none';
+    this.selectedOptionSize = 'standard';
   } else {
     document.getElementById('standard-sizes').style.display = 'none';
     document.getElementById('custom-size').style.display = 'flex';
+    this.selectedOptionSize = 'custom';
   }
   //updateImageSize(); // Actualizar el tamaño de la imagen
 }
@@ -547,16 +552,14 @@ function addToCart() {
   }
 
   // Obtener los valores del formulario
-  const quantity = document.querySelector('.quantity-field').value;
-  console.log(quantity)
-  const isCustomSize = document.querySelector('input[name="size-type"]:checked').value === 'custom';
+  const quantity = document.querySelector('.quantity-field input').value;
+  const isCustomSize = selectedOptionSize == 'custom';
 
   let size, customWidth, customHeight;
   if (isCustomSize) {
-    customWidth = document.getElementById('custom-size__width').value;
-    console.log(customWidth);
-    customHeight = document.getElementById('custom-size__height').value;
-    console.log(customHeight);
+    const customSizeInputs = document.querySelectorAll('#custom-size input');
+    customWidth = customSizeInputs[0].value;
+    customHeight = customSizeInputs[1].value;
 
     if (!customWidth || !customHeight) {
       showNotification('Por favor, ingresa las dimensiones personalizadas.', 'error');
@@ -657,7 +660,11 @@ function hideLoadingIndicator() {
   const loadingOverlay = document.querySelector('.loading-overlay');
   if (loadingOverlay) {
     loadingOverlay.classList.remove('show');
-    setTimeout(() => document.body.removeChild(loadingOverlay), 300);
+    
+    setTimeout(() => {
+      if (document.body.contains(loadingOverlay)) {
+        document.body.removeChild(loadingOverlay);
+      }
+    }, 300);
   }
 }
-

@@ -227,104 +227,25 @@ body {
     font-size: var(--font-size-content);
   }
   
-/* Frame picker styles */
-/*.frame-ios-picker-container {
-  position: relative;
-  height: auto;
-  border: 0px solid #dee2e6;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: center;
-  width: 50%;
-  margin: 10px auto;
-  padding: 5px 10px; 
-  }*/
-  
-/* Contenedor de las imágenes - modificado */
-.frame-ios-picker-wrapper {
-  position: relative;
-  overflow-x: auto; /* Permite el scroll horizontal */
-  white-space: nowrap;
-  padding: 10px 0; /* Reducido el padding vertical */
-  display: flex;
-  justify-content: flex-start;
-  align-items: center; /* Centra verticalmente los items */
-  background-color: #ffffff;
-  height: 150px; /* Aumentado para acomodar mejor las imágenes */
-  border-radius: 15px;
-  width: calc(100% - 20px); /* Ajustado el ancho */
+/* Frame picker carrousel */
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  scroll-snap-type: x mandatory; /* Para un scroll más preciso */
-  /*background-color: #005177;*/
-  scrollbar-width: none; /* Oculta la barra de scroll en Firefox */
-  -ms-overflow-style: none; /* Oculta la barra de scroll en Internet Explorer y Edge */
-  scroll-padding: 0 5px; /* Añade espacio para el snap pero no afecta el scroll normal */
-}
-  
-.frame-ios-picker {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  gap: 20px;
-  padding: 0 5px;
-  overflow-x: auto; /* Cambiar a scroll horizontal si es necesario */
-  -webkit-overflow-scrolling: touch;
-}
-.frame-ios-picker::-webkit-scrollbar {
-  display: none;
 }
 
-.frame-ios-picker-item {
-  scroll-snap-align: start;
+.swiper {
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(245, 245, 245, 0.95);
-  border-radius: 8px;
 }
-  
-.frame-ios-picker-item.selected {
-  background-color: rgba(231, 111, 81, 0.1);
-  height: 100%;
-  /*box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);*/ /* Sombra roja */
-  transition: box-shadow 0.3s ease, border 0.3s ease; /* Transición suave */
+
+.swiper-slide {
+  background-position: center;
+  background-size: contain;
+  width: 250px;
 }
-/* sombra de scroll */
-.frame-ios-picker-highlight {
-  /*position: absolute;
-  top: 50px;
-  left: 0;
-  right: 0;
-  height: 0;*/
-  pointer-events: none;
-  box-shadow: 0 1px 0 #ddd, 0 -1px 0 #ddd;
-  background-color: rgba(255, 255, 255, 0.7);
-  transition: height 0.3s ease, top 0.3s ease;
-  scroll-snap-type: y mandatory;
-}
-  
-.frame-thumbnail {
+
+.swiper-slide img {
+  display: block;
   width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  object-fit: contain;
-  /*height: 50px;*/
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} 
-/* Estilo de las flechas de navegación */
-.arrow-button {
-  color: rgb(17, 16, 16);
-  border: none;
-  background-color: transparent;
-  font-size: 2rem;
-  margin: 0;
-  padding: 0;
 }
 
 @keyframes show{
@@ -406,17 +327,8 @@ body {
       padding-right: 15px; /* Ajustar espacio al lado derecho para pantallas más pequeñas */
     }
 
-    .frame-ios-picker-wrapper {
-      width: calc(100vw - 20px); /* Ajustado el ancho */
-    }
-
-    .frame-thumbnail {
-      width: calc(50vw - 50px);
-      /*padding: 20px;*/
-    } 
-    
-    .arrow-left {
-      left: 70px;
+    .frames {
+      padding: 0 30px;
     }
     
   }
@@ -431,17 +343,9 @@ body {
       padding: 6px 16px;
     }
 
-    .frame-ios-picker-wrapper {
-      width: calc(100vw - 20px); /* Ajustado el ancho */
-      height: 150px !important;
+    .frames {
+      padding: 0 30px;
     }
-
-    .frame-thumbnail {
-      width: calc(50vw - 80px);
-      max-height: 50px !important;
-      padding-bottom: 20px;
-    }
-
   
     .add-to-cart-btn {
       padding: 8px;

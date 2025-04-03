@@ -668,3 +668,18 @@ function hideLoadingIndicator() {
     }, 300);
   }
 }
+
+var swiper = new Swiper('.mySwiper', {
+  effect: 'coverflow',
+  grabCursor: true,
+  centeredSlides: true,
+  slidesPerView: "2",
+  coverflowEffect: {
+    rotate: 15,
+    strech: 0,
+    depth: 150,
+    modifier: 3,
+    slideShadows: true,
+  },
+  loop: true,
+});

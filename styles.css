@@ -324,6 +324,15 @@ body {
       margin: 0 auto;
     }
 
+    .ios-picker-item {
+      font-size: 1.125rem; /* Cambia el tamaño de la fuente para pantallas más pequeñas */
+    }
+
+    .ios-picker-item.selected {
+      font-size: 1.125rem; /* Cambia el tamaño de la fuente para pantallas más pequeñas */
+    }
+
+
     .custom-size input {
       max-width: 40%;
     }
@@ -348,6 +357,14 @@ body {
   
     .upload-btn {
       padding: 6px 16px;
+    }
+
+    .ios-picker-item {
+      font-size: 1.125rem; /* Cambia el tamaño de la fuente para pantallas más pequeñas */
+    }
+
+    .ios-picker-item.selected {
+      font-size: 1.125rem; /* Cambia el tamaño de la fuente para pantallas más pequeñas */
     }
 
     .frames {

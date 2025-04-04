@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     console.error('Size picker not found');
   }
 
-  // // Initialize frame picker (horizontal)
-  // const framePicker = document.getElementById('frame-picker');
-  // if (framePicker) {
-  //   initializeHorizontalPicker('frame-picker');
-  // } else {
-  //   console.error('Frame picker not found');
-  // }
+  // Initialize frame picker (horizontal)
+  const framePicker = document.getElementById('frame-picker');
+  if (framePicker) {
+    initializeHorizontalPicker('frame-picker');
+  } else {
+    console.error('Frame picker not found');
+  }
 
   // Initialize the upload functionality
   uploadImage();
@@ -65,42 +65,43 @@ function initializeVerticalPicker(pickerId) {
   });
 }
 
-// function initializeHorizontalPicker(pickerId) {
-//   const picker = document.getElementById(pickerId);
-//   if (!picker) return;
+function initializeHorizontalPicker(pickerId) {
+  const picker = document.getElementById(pickerId);
+  if (!picker) return;
 
-//   const pickerItems = picker.querySelectorAll('.frame-ios-picker-item');
-//   if (pickerItems.length === 0) return;
+  const pickerItems = picker.querySelectorAll('.swiper-slide');
+  if (pickerItems.length === 0) return;
 
-//   // Configuración inicial
-//   pickerItems.forEach(i => i.classList.remove('selected'));
+  // Configuración inicial
+  pickerItems.forEach(i => i.classList.remove('selected'));
 
-//   // Evento de clic
-//   pickerItems.forEach(item => {
-//     item.addEventListener('click', function () {
-//       if (!uploadedImageData) {
-//         showNotification('Por favor, sube una imagen primero.', 'error');
-//         return;
-//       }
-//       pickerItems.forEach(i => i.classList.remove('selected'));
-//       item.classList.add('selected');
-//       item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
-//       updateFrameSelection();
-//     });
-//   });
+  // Evento de clic
+  pickerItems.forEach(item => {
+    item.addEventListener('click', function () {
+      if (!uploadedImageData) {
+        showNotification('Por favor, sube una imagen primero.', 'error');
+        return;
+      }
+      pickerItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+      console.log("🖼️ Item seleccionado:", item.dataset.value);
+      //updateFrameSelection();
+    });
+  });
 
-//   // Evento de scroll
-//   picker.addEventListener('scroll', function () {
-//     highlightHorizontalItem(picker, pickerItems);
-//     ensureHorizontalBoundary(picker, pickerItems);
-//   });
+  // Evento de scroll
+  picker.addEventListener('scroll', function () {
+    highlightHorizontalItem(picker, pickerItems);
+    ensureHorizontalBoundary(picker, pickerItems);
+  });
 
-//   // Evento de rueda del mouse
-//   picker.addEventListener('wheel', function (event) {
-//     event.preventDefault();
-//     picker.scrollLeft += event.deltaY;
-//   });
-// }
+  // Evento de rueda del mouse
+  picker.addEventListener('wheel', function (event) {
+    event.preventDefault();
+    picker.scrollLeft += event.deltaY;
+  });
+}
 // Funciones específicas para el picker vertical
 function highlightVerticalItem(picker, items) {
   const pickerRect = picker.getBoundingClientRect();
@@ -147,49 +148,49 @@ function ensureVerticalBoundary(picker, items) {
 }
 
 // Funciones específicas para el picker horizontal
-// function highlightHorizontalItem(picker, items) {
-//   const pickerRect = picker.getBoundingClientRect();
-//   const middlePosition = pickerRect.left + pickerRect.width / 2;
+function highlightHorizontalItem(picker, items) {
+  const pickerRect = picker.getBoundingClientRect();
+  const middlePosition = pickerRect.left + pickerRect.width / 2;
 
-//   let closestItem = null;
-//   let closestDistance = Infinity;
+  let closestItem = null;
+  let closestDistance = Infinity;
 
-//   items.forEach(item => {
-//     const itemRect = item.getBoundingClientRect();
-//     const itemMiddle = itemRect.left + itemRect.width / 2;
-//     const distance = Math.abs(itemMiddle - middlePosition);
+  items.forEach(item => {
+    const itemRect = item.getBoundingClientRect();
+    const itemMiddle = itemRect.left + itemRect.width / 2;
+    const distance = Math.abs(itemMiddle - middlePosition);
 
-//     if (distance < closestDistance) {
-//       closestDistance = distance;
-//       closestItem = item;
-//     }
-//   });
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestItem = item;
+    }
+  });
 
-//   const pickerHighlight = picker.parentElement.querySelector('.frame-ios-picker-highlight');
-//   if (pickerHighlight && closestItem) {
-//     const closestItemRect = closestItem.getBoundingClientRect();
-//     pickerHighlight.style.left = (closestItemRect.left - pickerRect.left) + 'px';
-//     pickerHighlight.style.width = closestItemRect.width + 'px';
-//   }
+  const pickerHighlight = picker.parentElement.querySelector('.frame-ios-picker-highlight');
+  if (pickerHighlight && closestItem) {
+    const closestItemRect = closestItem.getBoundingClientRect();
+    pickerHighlight.style.left = (closestItemRect.left - pickerRect.left) + 'px';
+    pickerHighlight.style.width = closestItemRect.width + 'px';
+  }
 
-//   if (closestItem) {
-//     items.forEach(item => item.classList.remove('selected'));
-//     closestItem.classList.add('selected');
-//   }
-// }
+  if (closestItem) {
+    items.forEach(item => item.classList.remove('selected'));
+    closestItem.classList.add('selected');
+  }
+}
 
-// function ensureHorizontalBoundary(picker, items) {
-//   const firstItem = items[0];
-//   const lastItem = items[items.length - 1];
+function ensureHorizontalBoundary(picker, items) {
+  const firstItem = items[0];
+  const lastItem = items[items.length - 1];
 
-//   if (picker.scrollLeft <= 0) {
-//     items.forEach(item => item.classList.remove('selected'));
-//     firstItem.classList.add('selected');
-//   } else if (picker.scrollLeft + picker.clientWidth >= picker.scrollWidth - 1) {
-//     items.forEach(item => item.classList.remove('selected'));
-//     lastItem.classList.add('selected');
-//   }
-// }
+  if (picker.scrollLeft <= 0) {
+    items.forEach(item => item.classList.remove('selected'));
+    firstItem.classList.add('selected');
+  } else if (picker.scrollLeft + picker.clientWidth >= picker.scrollWidth - 1) {
+    items.forEach(item => item.classList.remove('selected'));
+    lastItem.classList.add('selected');
+  }
+}
 
 // Función para los botones de flecha (si los necesitas)
 // function scrollLeftHandler() {
@@ -230,7 +231,7 @@ function toggleFrameOptions(show) {
         centeredSlides: true,
         slidesPerView: "2",
         coverflowEffect: {
-          rotate: 15,
+          rotate: 20,
           strech: 0,
           depth: 150,
           modifier: 3,
@@ -596,7 +597,7 @@ function addToCart() {
   let frame = 'sin-marco';
 
   if (withFrame) {
-    const selectedFrameElement = document.querySelector('#frame-picker .frame-ios-picker-item.selected');
+    const selectedFrameElement = document.querySelector('.swiper-slide .swiper-slide.selected');
     frame = selectedFrameElement ? selectedFrameElement.getAttribute('data-value') : 'frame1';
   }
 

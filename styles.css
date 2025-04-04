@@ -248,6 +248,13 @@ body {
   width: 100%;
 }
 
+.swiper-slide.selected {
+  background-color: rgba(231, 111, 81, 0.1);
+  height: 100%;
+  /*box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);*/ /* Sombra roja */
+  transition: box-shadow 0.3s ease, border 0.3s ease; /* Transición suave */
+}
+
 @keyframes show{
   from{
     opacity: 0;

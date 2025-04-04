@@ -1,5 +1,6 @@
 // Variable global para seleccion de tamaños
 var selectedOptionSize;
+let currentSelectedFrame = 'frame1'; // Valor por defecto para el marco
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize size picker (vertical)
@@ -86,7 +87,7 @@ function initializeHorizontalPicker(pickerId) {
       item.classList.add('selected');
       item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
       console.log("🖼️ Item seleccionado:", item.dataset.value);
-      //updateFrameSelection();
+      currentSelectedFrame = item.getAttribute('data-value');
     });
   });
 
@@ -597,8 +598,8 @@ function addToCart() {
   let frame = 'sin-marco';
 
   if (withFrame) {
-    const selectedFrameElement = document.querySelector('.swiper-slide .swiper-slide.selected');
-    frame = selectedFrameElement ? selectedFrameElement.getAttribute('data-value') : 'frame1';
+    const selectedFrameElement = document.querySelector('#frame-picker .swiper-slide.selected');
+    frame = selectedFrameElement ? currentSelectedFrame : 'frame1';
   }
 
   // Verificar si `ajax_object` está definido antes de usarlo

@@ -286,7 +286,7 @@ function uploadImage() {
 
         // Ajustes de estilo al subir imagen
         uploadArea.style.margin = '0';
-        uploadArea.style.padding = '0 15px';
+        // uploadArea.style.padding = '0 15px';
         removeButtonContainer.style.padding = '0 0 20px 0';
       };
       reader.readAsDataURL(file); // Leer el archivo como una URL de datos

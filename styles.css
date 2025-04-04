@@ -5,8 +5,8 @@
   --font-title: "Krona One", serif;
   --font-content: "Montserrat", serif;
 
-  --font-size-title: 1.313rem;
-  --font-size-content: 1.25rem; 
+  --font-size-title: 1.25rem;
+  --font-size-content: 1.125rem; 
 }
 
 body {
@@ -58,7 +58,7 @@ body {
     border: none;
     padding: 10px 24px;
     border-radius: 4px;
-    font-size: var(--primary-color);
+    font-size: var(--font-size-content);
     cursor: pointer;
     transition: background-color 0.3s;
   }
@@ -252,7 +252,6 @@ body {
 .swiper-slide.selected {
   background-color: rgba(231, 111, 81, 0.1);
   height: 100%;
-  /*box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);*/ /* Sombra roja */
   transition: box-shadow 0.3s ease, border 0.3s ease; /* Transición suave */
 }
 
@@ -288,7 +287,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
-  font-size: var(--font-size-title);
+  font-size: var(--font-size-content);
   margin-top: 20px;
   transition: background-color 0.3s;
   width: 100%;

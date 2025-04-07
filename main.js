@@ -689,3 +689,76 @@ function hideLoadingIndicator() {
     }, 300);
   }
 }
+
+// Precio de acuerdo a las medidas (Ancho x Alto)
+const prices = {
+  "10X15": 0.65,
+  "13X18": 0.95,
+  "15X21": 1.10,
+  "20X25": 3.50,
+  "20X30": 3.80,
+  "20X40": 5.00,
+  "20X50": 6.30,
+  "20X60": 7.20,
+  "25X30": 4.30,
+  "25X38": 5.20,
+  "25X40": 6.50,
+  "25X50": 7.50,
+  "25X60": 7.50,
+  "30X40": 7.70,
+  "30X45": 8.60,
+  "30X50": 10.00,
+  "30X60": 10.50
+};
+
+// Función para calcular el precio total (Estandarizado)
+function updateTotalPrice() {
+  
+  const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
+  
+ 
+  const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
+
+  let pricePerUnit = 0;
+
+  
+  if (selectedSize) {
+    pricePerUnit = prices[selectedSize] || 0;
+  }
+  
+  // Calcular el precio total
+  const totalPrice = pricePerUnit * quantity;
+  
+  // Redondear
+  const roundedPrice = totalPrice.toFixed(2);
+  
+  // Actualizar el texto del precio total en el botón
+  document.getElementById("total-price-button").innerText = `S/. ${roundedPrice}`;
+}
+
+// Actualizar el precio cuando el documento esté cargado
+document.addEventListener('DOMContentLoaded', function () {
+  
+  
+  document.querySelector('.quantity-field input').addEventListener('input', updateTotalPrice);
+
+  
+  const sizePickerItems = document.querySelectorAll('#size-picker .ios-picker-item');
+
+ 
+  sizePickerItems.forEach(item => {
+    item.addEventListener('click', () => {
+    
+      sizePickerItems.forEach(i => i.classList.remove('selected'));
+      
+  
+      item.classList.add('selected');
+      
+      
+      updateTotalPrice();
+    });
+  });
+
+ 
+  updateTotalPrice();
+});

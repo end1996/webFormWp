@@ -44,7 +44,7 @@
         <div class="section">
             <div class="section-title">
                 <label>Tamaño:</label>
-                <div class="radio-group">
+                <div class="radio-group" id="size-options">
                     <label class="radio-label">
                         <input type="radio" name="size-type" class="radio-input" checked
                             onclick="toggleSizeOptions('standard')">
@@ -129,7 +129,7 @@
             </div>
         </div>
     </div>
-    <button class="add-to-cart-btn">Agregar al carro</button>
+    <button class="add-to-cart-btn">Agregar al carro <span id="total-price-button">S/. 0.00</span></button>
 </body>
 <script src="main.js"></script>
 

@@ -373,6 +373,7 @@ const customCache = {};
 function updateImageSize() {
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
   const uploadedImage = document.getElementById("uploaded-image");
+  const scrollYBefore = window.scrollY;
   const uploadArea = document.querySelector('.upload-area');
   const container = uploadedImage.parentElement; // Contenedor de la imagen
   const widthInput = document.getElementById("custom-size__width");
@@ -474,6 +475,11 @@ function updateImageSize() {
   // 5. Aplicación de estilos optimizada
   uploadedImage.style.width = `${finalWidth}px`;
   uploadedImage.style.height = `${finalHeight}px`;
+
+  setTimeout(() => {
+    window.scrollTo({ top: scrollYBefore, behavior: 'smooth' });
+  }, 10); // Esperás que se apliquen los estilos primero
+
   uploadedImage.style.maxWidth = '100%';
   uploadedImage.style.maxHeight = '100%';
   uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
@@ -716,7 +722,6 @@ function updateTotalPrice() {
   
   const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
   
- 
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
 
   let pricePerUnit = 0;

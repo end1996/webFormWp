@@ -79,6 +79,7 @@ body {
     display: none; /* Ocultar la imagen por defecto */
     object-fit: contain; /* Cambia el valor de object-fit según tus necesidades */
     box-sizing: border-box;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Estilo para el botón de eliminar imagen */

@@ -67,6 +67,15 @@ body {
     background-color: #e85d3e;
   }
 
+  /* texto para panatallas web */
+  .desktop-upload-text {
+    display: none; 
+  }
+  /* texto para panatalla movil */
+  .mobile-upload-text {
+    display: none; 
+  }
+
   .image-container {
     padding: 5px;
     display: flex;
@@ -316,6 +325,14 @@ body {
       padding: 8px 20px;
     }
 
+    .desktop-upload-text {
+      display: none; 
+    }
+
+    .mobile-upload-text {
+      display: block;
+    }
+
     .custom-size {
       width: 100%;
       padding: 0;
@@ -377,6 +394,16 @@ body {
       min-height: 100px;
       width: 100%;
       padding: 10px 0 10px 0;/* Ajustar espacio al lado derecho para pantallas más pequeñas */
+    }
+  }
+
+  @media (min-width: 769px) { 
+    .desktop-upload-text {
+        display: block; 
+    }
+
+    .mobile-upload-text {
+        display: none; 
     }
   }
   

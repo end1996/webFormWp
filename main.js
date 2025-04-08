@@ -50,6 +50,7 @@ function initializeVerticalPicker(pickerId) {
       item.classList.add('selected');
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
       updateImageSize();
+      updateTotalPrice(); // Actualizar precio total al seleccionar tamaño
     });
   });
 
@@ -303,7 +304,6 @@ function uploadImage() {
     const svgElement = document.querySelector('.upload-area svg');
     const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
     const paragraphElementMobile = document.querySelector('.mobile-upload-text');
-    const buttonElement = document.querySelector('.upload-btn');
     const uploadArea = document.querySelector('.upload-area');
     const imageContainer = document.querySelector('.image-container');
     const fileInput = document.getElementById('file-input');
@@ -317,7 +317,6 @@ function uploadImage() {
     svgElement.style.display = "";
     paragraphElementDesktop.style.display = "";
     paragraphElementMobile.style.display = "";
-    buttonElement.style.display = "";
     uploadArea.style.padding = "5px";
     uploadArea.style.marginLeft = "auto";
     uploadArea.style.marginRight = "auto";
@@ -721,14 +720,17 @@ const prices = {
 
 // Función para calcular el precio total (Estandarizado)
 function updateTotalPrice() {
+  if (!uploadedImageData) {
+  
+    document.getElementById("total-price-button").innerText = `S/. 0.00`; 
+    return;
+  }
   
   const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
-  
   const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
 
   let pricePerUnit = 0;
 
-  
   if (selectedSize) {
     pricePerUnit = prices[selectedSize] || 0;
   }
@@ -739,30 +741,25 @@ function updateTotalPrice() {
   // Redondear
   const roundedPrice = totalPrice.toFixed(2);
   
-  // Actualizar el texto del precio total en el botón
+  // Actualizar el texto del precio total en el botón 
   document.getElementById("total-price-button").innerText = `S/. ${roundedPrice}`;
 }
 
-// Actualizar el precio cuando el documento esté cargado
+
 document.addEventListener('DOMContentLoaded', function () {
-  
-  
   document.querySelector('.quantity-field input').addEventListener('input', updateTotalPrice);
 
-  
   const sizePickerItems = document.querySelectorAll('#size-picker .ios-picker-item');
 
- 
   sizePickerItems.forEach(item => {
     item.addEventListener('click', () => {
-    
       sizePickerItems.forEach(i => i.classList.remove('selected'));
-      
-  
+      if (!uploadedImageData) {
+        showNotification('Por favor, sube una imagen primero.', 'error');
+        return;
+      }
       item.classList.add('selected');
-      
-      
-      updateTotalPrice();
+      updateTotalPrice(); 
     });
   });
 

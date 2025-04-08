@@ -272,12 +272,14 @@ function uploadImage() {
         uploadedImageData = reader.result;
 
         const svgElement = document.querySelector('.upload-area svg');
-        const paragraphElement = document.querySelector('.upload-area p');
+        const paragraphElementMobile = document.querySelector('.mobile-upload-text');
+        const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
         const buttonElement = document.querySelector('.upload-btn');
 
         // Ocultar los elementos de carga
         svgElement.style.display = 'none';
-        paragraphElement.style.display = 'none';
+        paragraphElementMobile.style.display = 'none';
+        paragraphElementDesktop.style.display = 'none';
         buttonElement.style.display = 'none';
 
         // Mostrar botón de eliminar imagen
@@ -301,7 +303,8 @@ function uploadImage() {
     const uploadedImage = document.getElementById('uploaded-image');
     const removeButton = document.querySelector('.remove-image-btn');
     const svgElement = document.querySelector('.upload-area svg');
-    const paragraphElement = document.querySelector('.upload-area p');
+    const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
+    const paragraphElementMobile = document.querySelector('.mobile-upload-text');
     const buttonElement = document.querySelector('.upload-btn');
     const uploadArea = document.querySelector('.upload-area');
     const imageContainer = document.querySelector('.image-container');
@@ -314,7 +317,8 @@ function uploadImage() {
 
     // Restaurar los elementos originales del upload
     svgElement.style.display = "";
-    paragraphElement.style.display = "";
+    paragraphElementDesktop.style.display = "";
+    paragraphElementMobile.style.display = "";
     buttonElement.style.display = "";
     uploadArea.style.padding = "5px";
     uploadArea.style.marginLeft = "auto";

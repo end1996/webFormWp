@@ -48,8 +48,8 @@ function initializeVerticalPicker(pickerId) {
       }
       pickerItems.forEach(i => i.classList.remove('selected'));
       item.classList.add('selected');
-      item.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      updateImageSize();
+    //  item.scrollIntoView({ block: 'center', behavior: 'smooth' }); //
+     // updateImageSize();//
       updateTotalPrice(); // Actualizar precio total al seleccionar tamaño
     });
   });
@@ -578,6 +578,13 @@ function addToCart() {
     console.log("⚠️ No hay imagen subida.");
     return;
   }
+
+   // Verificar si `ajax_object` está definido antes de usarlo
+   if (typeof ajax_object === 'undefined') {
+    console.error("❌ ERROR: ajax_object no está definido. Verifica que el script de WordPress está cargando correctamente.");
+    showNotification("Error de configuración. Contacte con el administrador.", "error");
+    return;
+}
 
   // Obtener los valores del formulario
   const quantity = document.querySelector('.quantity-field input').value;

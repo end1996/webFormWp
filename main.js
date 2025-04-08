@@ -274,13 +274,11 @@ function uploadImage() {
         const svgElement = document.querySelector('.upload-area svg');
         const paragraphElementMobile = document.querySelector('.mobile-upload-text');
         const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
-        const buttonElement = document.querySelector('.upload-btn');
 
         // Ocultar los elementos de carga
         svgElement.style.display = 'none';
         paragraphElementMobile.style.display = 'none';
         paragraphElementDesktop.style.display = 'none';
-        buttonElement.style.display = 'none';
 
         // Mostrar botón de eliminar imagen
         removeButton.style.display = 'block';

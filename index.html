@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="ios-picker.js"></script> <!-- Añadir el módulo primero -->
 </head>
 
 <body>
-    <h1>holi</h1>
+    <h1>Impresión de Fotos</h1>
     <div id="print-image-form" class="print-image-form">
+        <!-- Sección de subida de imagen (se mantiene igual) -->
         <div class="upload-area" draggable="true" onclick="triggerFileInput()">
             <div class="upload-area-elements">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e76f51" stroke-width="2"
@@ -22,7 +24,6 @@
                 </svg>
                 <p class="desktop-upload-text">Arrastra tu imagen aquí o haz clic para subir</p>
                 <p class="mobile-upload-text">Sube tu imagen aquí</p>
-                <!-- <button class="upload-btn" onclick="triggerFileInput()">Subir imagen</button> -->
                 <input type="file" id="file-input" style="display: none;" />
             </div>
             <div class="image-container">
@@ -33,6 +34,7 @@
             <button id="remove-image-btn" class="remove-image-btn" style="display: none;">Eliminar imagen</button>
         </div>
 
+        <!-- Sección de cantidad (se mantiene igual) -->
         <div class="section">
             <div class="section-title">
                 <label>Cantidad</label>
@@ -42,6 +44,7 @@
             </div>
         </div>
 
+        <!-- Sección de tamaños (modificada) -->
         <div class="section">
             <div class="section-title">
                 <label>Tamaño:</label>
@@ -57,56 +60,36 @@
                     </label>
                 </div>
             </div>
-            <div id="standard-sizes" class="ios-picker-container">
-                <div class="ios-picker-highlight"></div>
-                <div class="ios-picker" id="size-picker">
-                    <div class="ios-picker-item" data-value="10X15"> 10cm X 15cm (Ancho X Alto) (S/.0.65)</div>
-                    <div class="ios-picker-item" data-value="13X18"> 13cm X 18cm (Ancho X Alto) (S/.0.95)</div>
-                    <div class="ios-picker-item" data-value="15X21"> 15cm X 21cm (Ancho X Alto) (S/.1.10)</div>
-                    <div class="ios-picker-item" data-value="20X25"> 20cm X 25cm (Ancho X Alto) (S/.3.50)</div>
-                    <div class="ios-picker-item" data-value="20X30"> 20cm X 30cm (Ancho X Alto) (S/.3.80)</div>
-                    <div class="ios-picker-item" data-value="20X40"> 20cm X 40cm (Ancho X Alto) (S/.5.00) </div>
-                    <div class="ios-picker-item" data-value="20X50"> 20cm X 50cm (Ancho X Alto) (S/.6.30)</div>
-                    <div class="ios-picker-item" data-value="20X60"> 20cm X 60cm (Ancho X Alto) (S/.7.20) </div>
-                    <div class="ios-picker-item" data-value="25X30"> 25cm X 30cm (Ancho X Alto) (S/.4.30) </div>
-                    <div class="ios-picker-item" data-value="25X38"> 25cm X 38cm (Ancho X Alto) (S/.5.20)</div>
-                    <div class="ios-picker-item" data-value="25X40"> 25cm X 40cm (Ancho X Alto) (S/.6.50) </div>
-                    <div class="ios-picker-item" data-value="25X50"> 25cm X 50cm (Ancho X Alto) (S/.7.50)</div>
-                    <div class="ios-picker-item" data-value="25X60"> 25cm X 60cm (Ancho X Alto) (S/.7.50) </div>
-                    <div class="ios-picker-item" data-value="30X40"> 30cm X 40cm (Ancho X Alto) (S/.7.70)</div>
-                    <div class="ios-picker-item" data-value="30X45"> 30cm X 45cm (Ancho X Alto) (S/.8.60) </div>
-                    <div class="ios-picker-item" data-value="30X50"> 30cm X 50cm (Ancho X Alto) (S/.10.00)</div>
-                    <div class="ios-picker-item" data-value="30X60"> 30cm X 60cm (Ancho X Alto) (S/.10.50)</div>
-                </div>
+            <div id="standard-sizes" class="ios-picker-container" style="display: block;">
+                <div id="size-picker"></div> <!-- Contenedor para el iOSPicker -->
             </div>
 
             <div id="custom-size" class="custom-size" style="display: none;">
-                <input id="custom-size__width" type="number" placeholder="Ancho (cm)" value="" min="10" max="60"
-                    step="1">
-                <input id="custom-size__height" type="number" placeholder="Alto (cm)" value="" min="15" max="100"
-                    step="1">
+                <input id="custom-size__width" type="number" placeholder="Ancho (cm)" min="10" max="60" step="1">
+                <input id="custom-size__height" type="number" placeholder="Alto (cm)" min="15" max="100" step="1">
             </div>
         </div>
 
+        <!-- Sección de comentarios (se mantiene igual) -->
         <div class="section">
             <div class="section-title">
                 Comentarios adicionales
             </div>
-
             <textarea class="comment-area" placeholder=" Escribe aquí tus comentarios..."></textarea>
         </div>
 
+        <!-- Sección de marcos (se mantiene igual) -->
         <div class="section">
             <div class="section-title">
                 <div class="radio-group">
                     <label class="radio-label">
                         <input type="radio" name="frame" class="radio-input" checked
                             onclick="toggleFrameOptions(false)">
-                        <label class="radio-label">Sin marco</label>
+                        Sin marco
                     </label>
                     <label class="radio-label">
                         <input type="radio" name="frame" class="radio-input" onclick="toggleFrameOptions(true)">
-                        <label class="radio-label">Con marco</label>
+                        Con marco
                     </label>
                 </div>
             </div>
@@ -131,7 +114,7 @@
         </div>
     </div>
     <button class="add-to-cart-btn">Agregar al carro <span id="total-price-button">S/. 0.00</span></button>
-</body>
-<script src="main.js"></script>
 
+    <script src="main.js"></script> <!-- Script principal después del HTML -->
+</body>
 </html>

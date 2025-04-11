@@ -1,775 +1,337 @@
-// Variable global para seleccion de tamaños
-var selectedOptionSize;
-let currentSelectedFrame = 'frame1'; // Valor por defecto para el marco
+let uploadedImageData = null;
+let currentSelectedFrame = 'frame1';
+let sizePicker;
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Initialize size picker (vertical)
-  const sizePicker = document.getElementById('size-picker');
-  if (sizePicker) {
-    initializeVerticalPicker('size-picker');
-  } else {
-    console.error('Size picker not found');
-  }
+const sizePrices = {
+    "10X15": 0.65,
+    "13X18": 0.95,
+    "15X21": 1.10,
+    "20X25": 3.50,
+    "20X30": 3.80,
+    "20X40": 5.00,
+    "20X50": 6.30,
+    "20X60": 7.20,
+    "25X30": 4.30,
+    "25X38": 5.20,
+    "25X40": 6.50,
+    "25X50": 7.50,
+    "25X60": 7.50,
+    "30X40": 7.70,
+    "30X45": 8.60,
+    "30X50": 10.00,
+    "30X60": 10.50
+};
 
-  // Initialize frame picker (horizontal)
-  const framePicker = document.getElementById('frame-picker');
-  if (framePicker) {
-    initializeHorizontalPicker('frame-picker');
-  } else {
-    console.error('Frame picker not found');
-  }
-
-  // Initialize the upload functionality
-  uploadImage();
-
-  // Add event listener for the add to cart button
-  const addToCartBtn = document.querySelector('.add-to-cart-btn');
-  if (addToCartBtn) {
-    addToCartBtn.addEventListener('click', addToCart);
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSizePicker();
+    initializeFramePicker();
+    uploadImage();
+    setupEventListeners();
 });
 
-function initializeVerticalPicker(pickerId) {
-  const picker = document.getElementById(pickerId);
-  if (!picker) return;
+function initializeSizePicker() {
+    const sizeOptions = Object.keys(sizePrices).map(value => ({
+        value: value,
+        label: `${value.replace("X", "cm X ")}cm (S/.${sizePrices[value].toFixed(2)})`
+    }));
 
-  const pickerItems = picker.querySelectorAll('.ios-picker-item');
-  if (pickerItems.length === 0) return;
-
-  // Configuración inicial
-  pickerItems.forEach(i => i.classList.remove('selected'));
-
-  // Evento de clic
-  pickerItems.forEach(item => {
-    item.addEventListener('click', function () {
-      if (!uploadedImageData) {
-        showNotification('Por favor, sube una imagen primero.', 'error');
-        return;
-      }
-      pickerItems.forEach(i => i.classList.remove('selected'));
-      item.classList.add('selected');
-    //  item.scrollIntoView({ block: 'center', behavior: 'smooth' }); //
-     // updateImageSize();//
-      updateTotalPrice(); // Actualizar precio total al seleccionar tamaño
+    sizePicker = new iOSPicker({
+        container: document.getElementById('size-picker'),
+        items: sizeOptions,
+        initialValue: '10X15',
+        onChange: (value) => {
+            updateTotalPrice();
+        }
     });
-  });
-
-  // Evento de scroll
-  picker.addEventListener('scroll', function () {
-    highlightVerticalItem(picker, pickerItems);
-    ensureVerticalBoundary(picker, pickerItems);
-  });
-
-  // Evento de rueda del mouse
-  picker.addEventListener('wheel', function (event) {
-    event.preventDefault();
-    picker.scrollTop += event.deltaY;
-  });
 }
 
-function initializeHorizontalPicker(pickerId) {
-  const picker = document.getElementById(pickerId);
-  if (!picker) return;
+function initializeFramePicker() {
+    const framePicker = document.getElementById('frame-picker');
+    if (!framePicker) return;
 
-  const pickerItems = picker.querySelectorAll('.swiper-slide');
-  if (pickerItems.length === 0) return;
-
-  // Configuración inicial
-  pickerItems.forEach(i => i.classList.remove('selected'));
-
-  // Evento de clic
-  pickerItems.forEach(item => {
-    item.addEventListener('click', function () {
-      if (!uploadedImageData) {
-        showNotification('Por favor, sube una imagen primero.', 'error');
-        return;
-      }
-      pickerItems.forEach(i => i.classList.remove('selected'));
-      item.classList.add('selected');
-      item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
-      console.log("🖼️ Item seleccionado:", item.dataset.value);
-      currentSelectedFrame = item.getAttribute('data-value');
+    const pickerItems = framePicker.querySelectorAll('.swiper-slide');
+    pickerItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (!uploadedImageData) {
+                showNotification('Sube una imagen primero', 'error');
+                return;
+            }
+            pickerItems.forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            currentSelectedFrame = item.dataset.value;
+        });
     });
-  });
 
-  // Evento de scroll
-  picker.addEventListener('scroll', function () {
-    highlightHorizontalItem(picker, pickerItems);
-    ensureHorizontalBoundary(picker, pickerItems);
-  });
-
-  // Evento de rueda del mouse
-  picker.addEventListener('wheel', function (event) {
-    event.preventDefault();
-    picker.scrollLeft += event.deltaY;
-  });
-}
-// Funciones específicas para el picker vertical
-function highlightVerticalItem(picker, items) {
-  const pickerRect = picker.getBoundingClientRect();
-  const middlePosition = pickerRect.top + pickerRect.height / 2;
-
-  let closestItem = null;
-  let closestDistance = Infinity;
-
-  items.forEach(item => {
-    const itemRect = item.getBoundingClientRect();
-    const itemMiddle = itemRect.top + itemRect.height / 2;
-    const distance = Math.abs(itemMiddle - middlePosition);
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestItem = item;
-    }
-  });
-
-  const pickerHighlight = picker.parentElement.querySelector('.ios-picker-highlight');
-  if (pickerHighlight && closestItem) {
-    const closestItemRect = closestItem.getBoundingClientRect();
-    pickerHighlight.style.top = (closestItemRect.top - pickerRect.top) + 'px';
-    pickerHighlight.style.height = closestItemRect.height + 'px';
-  }
-
-  if (closestItem) {
-    items.forEach(item => item.classList.remove('selected'));
-    closestItem.classList.add('selected');
-  }
-}
-
-function ensureVerticalBoundary(picker, items) {
-  const firstItem = items[0];
-  const lastItem = items[items.length - 1];
-
-  if (picker.scrollTop <= 0) {
-    items.forEach(item => item.classList.remove('selected'));
-    firstItem.classList.add('selected');
-  } else if (picker.scrollTop + picker.clientHeight >= picker.scrollHeight - 1) {
-    items.forEach(item => item.classList.remove('selected'));
-    lastItem.classList.add('selected');
-  }
-}
-
-// Funciones específicas para el picker horizontal
-function highlightHorizontalItem(picker, items) {
-  const pickerRect = picker.getBoundingClientRect();
-  const middlePosition = pickerRect.left + pickerRect.width / 2;
-
-  let closestItem = null;
-  let closestDistance = Infinity;
-
-  items.forEach(item => {
-    const itemRect = item.getBoundingClientRect();
-    const itemMiddle = itemRect.left + itemRect.width / 2;
-    const distance = Math.abs(itemMiddle - middlePosition);
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestItem = item;
-    }
-  });
-
-  const pickerHighlight = picker.parentElement.querySelector('.frame-ios-picker-highlight');
-  if (pickerHighlight && closestItem) {
-    const closestItemRect = closestItem.getBoundingClientRect();
-    pickerHighlight.style.left = (closestItemRect.left - pickerRect.left) + 'px';
-    pickerHighlight.style.width = closestItemRect.width + 'px';
-  }
-
-  if (closestItem) {
-    items.forEach(item => item.classList.remove('selected'));
-    closestItem.classList.add('selected');
-  }
-}
-
-function ensureHorizontalBoundary(picker, items) {
-  const firstItem = items[0];
-  const lastItem = items[items.length - 1];
-
-  if (picker.scrollLeft <= 0) {
-    items.forEach(item => item.classList.remove('selected'));
-    firstItem.classList.add('selected');
-  } else if (picker.scrollLeft + picker.clientWidth >= picker.scrollWidth - 1) {
-    items.forEach(item => item.classList.remove('selected'));
-    lastItem.classList.add('selected');
-  }
-}
-
-// Función para los botones de flecha (si los necesitas)
-// function scrollLeftHandler() {
-//   const framePicker = document.getElementById('frame-picker');
-//   if (framePicker) {
-//     framePicker.scrollBy({ left: -100, behavior: 'smooth' });
-//   }
-// }
-
-// function scrollRightHandler() {
-//   const framePicker = document.getElementById('frame-picker');
-//   if (framePicker) {
-//     framePicker.scrollBy({ left: 100, behavior: 'smooth' });
-//   }
-// }
-
-function toggleSizeOptions(type) {
-  if (type === 'standard') {
-    document.getElementById('standard-sizes').style.display = 'block';
-    document.getElementById('custom-size').style.display = 'none';
-    this.selectedOptionSize = 'standard';
-  } else {
-    document.getElementById('standard-sizes').style.display = 'none';
-    document.getElementById('custom-size').style.display = 'flex';
-    this.selectedOptionSize = 'custom';
-  }
-  //updateImageSize(); // Actualizar el tamaño de la imagen
-}
-
-function toggleFrameOptions(show) {
-  document.getElementById('frame-ios-picker-wrapper').style.display = show ? 'block' : 'none';
-
-  if (show) {
-    if (!window.mySwiper) {
-      window.mySwiper = new Swiper('.mySwiper', {
+    new Swiper('.mySwiper', {
         effect: 'coverflow',
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "2",
         coverflowEffect: {
-          rotate: 20,
-          strech: 0,
-          depth: 150,
-          modifier: 3,
-          slideShadows: true,
+            rotate: 20,
+            stretch: 0,
+            depth: 150,
+            modifier: 3,
+            slideShadows: true,
         },
-        loop: true,
-      });
-    }
-  }
+        loop: true
+    });
 }
 
-// Variables globales para almacenar la imagen
-let uploadedImageData = null;
+function setupEventListeners() {
+    document.querySelector('.quantity-field input').addEventListener('input', updateTotalPrice);
+    document.getElementById("custom-size__width").addEventListener("input", handleCustomSize);
+    document.getElementById("custom-size__height").addEventListener("input", handleCustomSize);
+    document.querySelector('.add-to-cart-btn').addEventListener('click', addToCart);
+}
+
+function handleCustomSize() {
+    if (document.querySelector('input[name="size-type"]:checked').value === 'custom') {
+        updateTotalPrice();
+    }
+}
+
+function toggleSizeOptions(type) {
+    const standard = document.getElementById('standard-sizes');
+    const custom = document.getElementById('custom-size');
+    
+    standard.style.display = type === 'standard' ? 'block' : 'none';
+    custom.style.display = type === 'custom' ? 'flex' : 'none';
+    updateTotalPrice();
+}
+
+function toggleFrameOptions(show) {
+    document.getElementById('frame-ios-picker-wrapper').style.display = show ? 'block' : 'none';
+}
 
 function uploadImage() {
-  // Función para abrir el diálogo de selección de archivo
-  window.triggerFileInput = () => {
-    const fileInput = document.getElementById('file-input');
-    fileInput.click(); // Simula un clic en el input de archivo
-  };
+    window.triggerFileInput = () => document.getElementById('file-input').click();
 
-  // Función para manejar el cambio de imagen
-  const handleImageChange = (file) => {
-    if (file) {
-      const reader = new FileReader(); // Crear un FileReader para leer el archivo
-      reader.onloadend = () => {
-        // Cuando la lectura termine, mostrar la imagen
-        const uploadedImage = document.getElementById('uploaded-image');
-        const uploadArea = document.querySelector('.upload-area');
-        const removeButton = document.querySelector('.remove-image-btn');
-        const removeButtonContainer = document.querySelector('.remove-image-btn-container');
+    const handleImageChange = (file) => {
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const uploadedImage = document.getElementById('uploaded-image');
+            const uploadArea = document.querySelector('.upload-area');
+            const removeButton = document.getElementById('remove-image-btn');
 
-        uploadedImage.src = reader.result;
-        uploadedImage.style.display = 'block';
+            uploadedImage.src = reader.result;
+            uploadedImage.style.display = 'block';
+            uploadedImageData = reader.result;
 
-        // Guardar la URL de la imagen en la variable global
-        uploadedImageData = reader.result;
-
-        const svgElement = document.querySelector('.upload-area svg');
-        const paragraphElementMobile = document.querySelector('.mobile-upload-text');
-        const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
-
-        // Ocultar los elementos de carga
-        svgElement.style.display = 'none';
-        paragraphElementMobile.style.display = 'none';
-        paragraphElementDesktop.style.display = 'none';
-
-        // Mostrar botón de eliminar imagen
-        removeButton.style.display = 'block';
-        removeButton.onclick = removeUploadedImage;
-
-        // Ajustes de estilo al subir imagen
-        uploadArea.style.margin = '0';
-        // uploadArea.style.padding = '0 15px';
-        removeButtonContainer.style.padding = '0 0 20px 0';
-      };
-      reader.readAsDataURL(file); // Leer el archivo como una URL de datos
-    }
-  };
-
-  // Función para eliminar la imagen subida
-  window.removeUploadedImage = () => {
-    uploadedImageData = null;
-
-    // Restaurar visibilidad de los elementos originales
-    const uploadedImage = document.getElementById('uploaded-image');
-    const removeButton = document.querySelector('.remove-image-btn');
-    const svgElement = document.querySelector('.upload-area svg');
-    const paragraphElementDesktop = document.querySelector('.desktop-upload-text');
-    const paragraphElementMobile = document.querySelector('.mobile-upload-text');
-    const uploadArea = document.querySelector('.upload-area');
-    const imageContainer = document.querySelector('.image-container');
-    const fileInput = document.getElementById('file-input');
-
-    // Ocultar la imagen y el botón de eliminar
-    uploadedImage.src = "";
-    uploadedImage.style.display = "none";
-    removeButton.style.display = "none";
-
-    // Restaurar los elementos originales del upload
-    svgElement.style.display = "";
-    paragraphElementDesktop.style.display = "";
-    paragraphElementMobile.style.display = "";
-    uploadArea.style.padding = "5px";
-    uploadArea.style.marginLeft = "auto";
-    uploadArea.style.marginRight = "auto";
-    imageContainer.style.padding = "5px";
-
-    // Reincia el valor del input de archivo
-    if (fileInput) {
-      fileInput.value = ''; // Limpiar el valor del input de archivo
-    }
-  };
-
-
-  // Función para manejar el evento "drop"
-  const handleDrop = (event) => {
-    event.preventDefault(); // Evitar el comportamiento por defecto del navegador
-    const file = event.dataTransfer.files[0]; // Obtener el archivo arrastrado
-    handleImageChange(file); // Procesar el archivo
-    uploadArea.classList.remove('dragover'); // Quitar la clase de estilo "dragover"
-  };
-
-  // Asignar eventos
-  document.addEventListener('DOMContentLoaded', () => {
-    const fileInput = document.getElementById('file-input');
-    const uploadArea = document.querySelector('.upload-area');
-
-    if (fileInput) {
-      fileInput.addEventListener('change', (event) => {
-        const file = event.target.files?.[0]; // Obtener el archivo seleccionado
-        handleImageChange(file); // Procesar el archivo
-      });
-    }
-
-    if (uploadArea) {
-      // Evento para cuando el archivo está siendo arrastrado sobre el área
-      uploadArea.addEventListener('dragover', (event) => {
-        event.preventDefault(); // Evitar el comportamiento por defecto
-        uploadArea.classList.add('dragover'); // Añadir clase para estilos visuales
-      });
-
-      // Evento para cuando el archivo sale del área
-      uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover'); // Quitar clase de estilo
-      });
-
-      // Evento para cuando el archivo se suelta en el área
-      uploadArea.addEventListener('drop', handleDrop);
-    }
-  });
-}
-
-// Objeto para almacenar los tamaños ya calculados (caché)
-const sizeCache = {};
-const customCache = {};
-
-function updateImageSize() {
-  const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
-  const uploadedImage = document.getElementById("uploaded-image");
-  const scrollYBefore = window.scrollY;
-  const uploadArea = document.querySelector('.upload-area');
-  const container = uploadedImage.parentElement; // Contenedor de la imagen
-  const widthInput = document.getElementById("custom-size__width");
-  const heightInput = document.getElementById("custom-size__height");
-  let customWidth = widthInput.value;
-  let customHeight = heightInput.value;
-
-  if (!uploadedImage || !container) {
-    console.log("⚠️ No se puede actualizar el tamaño de la imagen. Datos faltantes.");
-    return;
-  }
-
-  if (!customWidth || !customHeight) {
-    console.log("Rellene ambos campos para actualizar tamaño personalizado.")
-  }
-
-  // Determinar si usamos tamaño predefinido o personalizado
-  const useCustomSize = !selectedSize && (customWidth > 10 && customHeight > 15);
-
-  // 1. Conversión más realista (1cm ≈ 38px para pantallas estándar)
-  const cmToPx = 40; // Ajustado para evitar dimensiones excesivas
-  // Alternativa dinámica: const cmToPx = (96 * window.devicePixelRatio) / 2.54;
-
-  // 2. Tamaño deseado en píxeles
-  let desiredWidthPx;
-  let desiredHeightPx;
-
-  if (useCustomSize) {
-    // Validar campos personalizados
-    if (!customWidth && !customHeight) {
-      console.log("Rellene al menos un campo para tamaño personalizado.");
-      return;
-    }
-
-    // Si solo se especifica un valor, mantener la relación de aspecto
-    if (!customWidth || !customHeight) {
-      const aspectRatio = uploadedImage.naturalWidth / uploadedImage.naturalHeight;
-      if (customWidth) {
-        desiredWidthPx = customWidth * cmToPx;
-        desiredHeightPx = desiredWidthPx / aspectRatio;
-      } else {
-        desiredHeightPx = customHeight * cmToPx;
-        desiredWidthPx = desiredHeightPx * aspectRatio;
-      }
-    } else {
-      desiredWidthPx = customWidth * cmToPx;
-      desiredHeightPx = customHeight * cmToPx;
-    }
-  } else {
-    // Si el tamaño ya está en caché, aplicamos los valores guardados
-    if (sizeCache[selectedSize]) {
-      const { width, height } = sizeCache[selectedSize];
-      uploadedImage.style.width = `${width}px`;
-      uploadedImage.style.height = `${height}px`;
-      console.log("↩️ Tamaño recuperado de caché:", { width, height });
-      return;
-    }
-
-    const [widthCm, heightCm] = selectedSize.split("X").map(Number);
-    desiredWidthPx = widthCm * cmToPx;
-    desiredHeightPx = heightCm * cmToPx;
-  }
-
-
-
-  // 3. Límites físicos (tamaño original y contenedor)
-  const maxNaturalWidth = uploadedImage.naturalWidth;
-  const maxNaturalHeight = uploadedImage.naturalHeight;
-  const maxContainerWidth = container.clientWidth;
-  const maxContainerHeight = container.clientHeight;
-
-  console.log('Dimensiones:', {
-    deseado: { desiredWidthPx, desiredHeightPx }, // 1270 X 746
-    máximoNatural: { maxNaturalWidth, maxNaturalHeight },
-    contenedor: { maxContainerWidth, maxContainerHeight }
-  });
-
-  // 4. Ajuste inteligente de tamaño
-  const widthScaleFactor = Math.min(
-    1,
-    maxNaturalWidth / desiredWidthPx,
-    maxContainerWidth / desiredWidthPx
-  );
-
-  const heightScaleFactor = Math.min(
-    1,
-    maxNaturalHeight / desiredHeightPx,
-    maxContainerHeight / desiredHeightPx
-  );
-
-  const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
-
-  const finalWidth = desiredWidthPx * scaleFactor;
-  const finalHeight = desiredHeightPx * scaleFactor;
-
-  // Guardamos en caché
-  sizeCache[selectedSize] = { width: finalWidth, height: finalHeight };
-
-  // 5. Aplicación de estilos optimizada
-  uploadedImage.style.width = `${finalWidth}px`;
-  uploadedImage.style.height = `${finalHeight}px`;
-
-  setTimeout(() => {
-    window.scrollTo({ top: scrollYBefore, behavior: 'smooth' });
-  }, 10); // Esperás que se apliquen los estilos primero
-
-  uploadedImage.style.maxWidth = '100%';
-  uploadedImage.style.maxHeight = '100%';
-  uploadedImage.style.objectFit = 'cover'; // Cambiado a 'contain' para mejor visualización
-  uploadedImage.style.display = 'block';
-
-  console.log('✅ Tamaño calculado y guardado en caché:', { finalWidth, finalHeight });
-}
-
-// Agregar eventos a los inputs personalizados para actualizar en tiempo real
-document.getElementById("custom-size__width").addEventListener("input", updateImageSize);
-document.getElementById("custom-size__height").addEventListener("input", updateImageSize);
-
-function analyzeImagePixels(img) {
-
-  if (img.naturalWidth === 0 || img.naturalHeight === 0) {
-    console.log("⚠️ La imagen aún no se ha cargado completamente.");
-    return;
-  }
-
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-
-  ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-
-  const imageData = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
-  const pixels = imageData.data;
-
-  console.log("Total de píxeles procesados:", pixels.length / 4);
-
-  predictRealSize(img.naturalWidth, img.naturalHeight);
-}
-
-function predictRealSize(width, height) {
-  console.log("Calculando tamaño real para:", width, height);
-
-  const factorX = 0.0169;
-  const factorY = 0.0169;
-
-  const realWidth = (width * factorX).toFixed(1);
-  const realHeight = (height * factorY).toFixed(1);
-
-  console.log(`Tamaño estimado en cm: ${realWidth} x ${realHeight}`);
-}
-
-window.onload = function () {
-  const uploadedImage = document.getElementById("uploaded-image");
-
-  if (uploadedImage.complete && uploadedImage.naturalWidth > 0) {
-    console.log("✅ La imagen ya estaba cargada.");
-    //updateImageSize();
-  } else {
-    console.log("⌛ Esperando a que la imagen se cargue...");
-    uploadedImage.onload = function () {
-      console.log("✅ Imagen cargada.");
-      analyzeImagePixels(uploadedImage);
-      //updateImageSize();
+            document.querySelector('.upload-area svg').style.display = 'none';
+            document.querySelector('.desktop-upload-text').style.display = 'none';
+            document.querySelector('.mobile-upload-text').style.display = 'none';
+            
+            removeButton.style.display = 'block';
+            uploadArea.style.padding = '0';
+        };
+        reader.readAsDataURL(file);
     };
-  }
-};
 
-// Llamar a la función para inicializar
-uploadImage();
+    const handleDrop = (event) => {
+        event.preventDefault();
+        handleImageChange(event.dataTransfer.files[0]);
+        document.querySelector('.upload-area').classList.remove('dragover');
+    };
 
-// Función para añadir al carrito
-document.addEventListener('DOMContentLoaded', function () {
-  console.log("✅ DOM completamente cargado.");
+    const fileInput = document.getElementById('file-input');
+    fileInput.addEventListener('change', (e) => handleImageChange(e.target.files[0]));
 
-  // Buscar el botón de agregar al carrito
-  const addToCartBtn = document.querySelector('.add-to-cart-btn');
-
-  if (addToCartBtn) {
-    //console.log("✅ Botón 'Agregar al carrito' encontrado.");
-    addToCartBtn.addEventListener('click', function () {
-      //console.log("🛒 Botón 'Agregar al carrito' clickeado.");
-      addToCart();
+    const uploadArea = document.querySelector('.upload-area');
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
     });
-  } else {
-    console.log("⚠️ No se encontró el botón 'Agregar al carrito'. Verifica la clase en el HTML.");
-  }
-});
-
-// Exponer la función al ámbito global para evitar problemas con `onclick`
-window.addToCart = addToCart;
-
-// Función para añadir al carrito --------------------------------------
-function addToCart() {
-  console.log("🚀 addToCart() fue llamada correctamente");
-
-  // Verificar si hay una imagen subida
-  if (!uploadedImageData) {
-    showNotification('Por favor, sube una imagen primero.', 'error');
-    console.log("⚠️ No hay imagen subida.");
-    return;
-  }
-
-   // Verificar si `ajax_object` está definido antes de usarlo
-   if (typeof ajax_object === 'undefined') {
-    console.error("❌ ERROR: ajax_object no está definido. Verifica que el script de WordPress está cargando correctamente.");
-    showNotification("Error de configuración. Contacte con el administrador.", "error");
-    return;
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', handleDrop);
+    
+    window.removeUploadedImage = () => {
+        uploadedImageData = null;
+        document.getElementById('uploaded-image').src = '';
+        document.getElementById('uploaded-image').style.display = 'none';
+        document.getElementById('remove-image-btn').style.display = 'none';
+        document.querySelector('.upload-area svg').style.display = '';
+        document.querySelector('.desktop-upload-text').style.display = 
+            window.innerWidth > 768 ? 'block' : 'none';
+        document.querySelector('.mobile-upload-text').style.display = 
+            window.innerWidth <= 768 ? 'block' : 'none';
+        fileInput.value = '';
+    };
 }
 
-  // Obtener los valores del formulario
-  const quantity = document.querySelector('.quantity-field input').value;
-  const isCustomSize = selectedOptionSize == 'custom';
-
-  let size, customWidth, customHeight;
-  if (isCustomSize) {
-    const customSizeInputs = document.querySelectorAll('#custom-size input');
-    customWidth = customSizeInputs[0].value;
-    customHeight = customSizeInputs[1].value;
-
-    if (!customWidth || !customHeight) {
-      showNotification('Por favor, ingresa las dimensiones personalizadas.', 'error');
-      console.log("⚠️ Falta ingresar dimensiones personalizadas.");
-      return;
+function addToCart() {
+    if (!uploadedImageData) {
+        showNotification('Sube una imagen primero', 'error');
+        return;
     }
-    size = `${customWidth}x${customHeight}`;
-  } else {
-    const selectedSizeElement = document.querySelector('#size-picker .ios-picker-item.selected');
-    size = selectedSizeElement ? selectedSizeElement.getAttribute('data-value') : '10X15';
-  }
 
-  const comments = document.querySelector('.comment-area').value;
-  const withFrame = document.querySelector('input[name="frame"]:checked').value !== 'sin-marco';
-  let frame = 'sin-marco';
+    const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
+    const isCustomSize = document.querySelector('input[name="size-type"]:checked').value === 'custom';
+    
+    let size, customWidth, customHeight;
+    if (isCustomSize) {
+        customWidth = document.getElementById('custom-size__width').value;
+        customHeight = document.getElementById('custom-size__height').value;
+        if (!customWidth || !customHeight) {
+            showNotification('Ingresa las medidas personalizadas', 'error');
+            return;
+        }
+        size = `${customWidth}x${customHeight}`;
+    } else {
+        size = sizePicker.getValue();
+    }
 
-  if (withFrame) {
-    const selectedFrameElement = document.querySelector('#frame-picker .swiper-slide.selected');
-    frame = selectedFrameElement ? currentSelectedFrame : 'frame1';
-  }
+    const comments = document.querySelector('.comment-area').value;
+    const withFrame = document.querySelector('input[name="frame"]:checked').value !== 'sin-marco';
+    const frame = withFrame ? currentSelectedFrame : 'sin-marco';
 
-  // Verificar si `ajax_object` está definido antes de usarlo
-  if (typeof ajax_object === 'undefined') {
-    console.error("❌ ERROR: ajax_object no está definido. Verifica que el script de WordPress está cargando correctamente.");
-    showNotification("Error de configuración. Contacte con el administrador.", "error");
-    return;
-  }
+    const formData = new FormData();
+    formData.append('action', 'process_print_image');
+    formData.append('nonce', ajax_object.nonce);
+    formData.append('image_data', uploadedImageData);
+    formData.append('quantity', quantity);
+    formData.append('size', size);
+    formData.append('is_custom_size', isCustomSize);
+    formData.append('custom_width', customWidth || 0);
+    formData.append('custom_height', customHeight || 0);
+    formData.append('comments', comments);
+    formData.append('frame', frame);
 
-  // Preparar los datos para enviar
-  const formData = new FormData();
-  formData.append('action', 'process_print_image');
-  formData.append('nonce', ajax_object.nonce);
-  formData.append('image_data', uploadedImageData);
-  formData.append('quantity', quantity); //✅
-  formData.append('size', size); //✅ 
-  formData.append('is_custom_size', isCustomSize); //✅
-  formData.append('custom_width', customWidth || 0); //✅
-  formData.append('custom_height', customHeight || 0); //✅
-  formData.append('comments', comments); //✅
-  formData.append('frame', frame); //✅
-
-  console.log("📦 Enviando datos al servidor...", Object.fromEntries(formData));
-
-  // Mostrar indicador de carga
-  showLoadingIndicator();
-
-  // Enviar datos mediante AJAX
-  fetch(ajax_object.ajax_url, {
-    method: 'POST',
-    body: formData,
-    credentials: 'same-origin'
-  })
+    showLoadingIndicator();
+    
+    fetch(ajax_object.ajax_url, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    })
     .then(response => response.json())
     .then(data => {
-      hideLoadingIndicator();
-      console.log("🔄 Respuesta del servidor:", data);
-
-      if (data.success) {
-        showNotification('¡Producto añadido al carrito!', 'success');
-        setTimeout(() => {
-          window.location.href = data.data.cart_url;
-        }, 1500);
-      } else {
-        showNotification('Error: ' + data.data, 'error');
-      }
+        hideLoadingIndicator();
+        if (data.success) {
+            showNotification('¡Añadido al carrito!', 'success');
+            setTimeout(() => window.location.href = data.data.cart_url, 1500);
+        } else {
+            showNotification('Error: ' + data.data, 'error');
+        }
     })
     .catch(error => {
-      hideLoadingIndicator();
-      console.error("❌ Error al procesar la solicitud:", error);
-      showNotification('Error al procesar la solicitud: ' + error.message, 'error');
+        hideLoadingIndicator();
+        showNotification('Error de conexión', 'error');
+        console.error('Error:', error);
     });
 }
 
-// Función para mostrar notificaciones
-function showNotification(message, type = 'info') {
+function updateTotalPrice() {
+    if (!uploadedImageData) {
+        document.getElementById("total-price-button").textContent = 'S/. 0.00';
+        return;
+    }
+
+    const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
+    let price = 0;
+
+    if (document.querySelector('input[name="size-type"]:checked').value === 'standard') {
+        const size = sizePicker.getValue();
+        price = sizePrices[size] || 0;
+    } else {
+        price = 5.00;
+    }
+
+    document.getElementById("total-price-button").textContent = 
+        `S/. ${(price * quantity).toFixed(2)}`;
+}
+
+function showNotification(message, type) {
+  // Crear contenedor de notificaciones si no existe
+  let notificationContainer = document.getElementById('notification-container');
+  if (!notificationContainer) {
+      notificationContainer = document.createElement('div');
+      notificationContainer.id = 'notification-container';
+      notificationContainer.style.position = 'fixed';
+      notificationContainer.style.top = '20px';
+      notificationContainer.style.right = '20px';
+      notificationContainer.style.zIndex = '10000';
+      document.body.appendChild(notificationContainer);
+  }
+
+  // Crear elemento de notificación
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  setTimeout(() => notification.classList.add('show'), 10);
-  setTimeout(() => {
-    notification.classList.remove('show');
-    setTimeout(() => document.body.removeChild(notification), 300);
-  }, 3000);
-}
-
-// Función para mostrar indicador de carga
-function showLoadingIndicator() {
-  const loadingOverlay = document.createElement('div');
-  loadingOverlay.className = 'loading-overlay';
-  loadingOverlay.innerHTML = `<div class="loading-spinner"></div><p>Procesando...</p>`;
-  document.body.appendChild(loadingOverlay);
-  setTimeout(() => loadingOverlay.classList.add('show'), 10);
-}
-
-// Función para ocultar indicador de carga
-function hideLoadingIndicator() {
-  const loadingOverlay = document.querySelector('.loading-overlay');
-  if (loadingOverlay) {
-    loadingOverlay.classList.remove('show');
-    
-    setTimeout(() => {
-      if (document.body.contains(loadingOverlay)) {
-        document.body.removeChild(loadingOverlay);
-      }
-    }, 300);
-  }
-}
-
-// Precio de acuerdo a las medidas (Ancho x Alto)
-const prices = {
-  "10X15": 0.65,
-  "13X18": 0.95,
-  "15X21": 1.10,
-  "20X25": 3.50,
-  "20X30": 3.80,
-  "20X40": 5.00,
-  "20X50": 6.30,
-  "20X60": 7.20,
-  "25X30": 4.30,
-  "25X38": 5.20,
-  "25X40": 6.50,
-  "25X50": 7.50,
-  "25X60": 7.50,
-  "30X40": 7.70,
-  "30X45": 8.60,
-  "30X50": 10.00,
-  "30X60": 10.50
-};
-
-// Función para calcular el precio total (Estandarizado)
-function updateTotalPrice() {
-  if (!uploadedImageData) {
   
-    document.getElementById("total-price-button").innerText = `S/. 0.00`; 
-    return;
+  // Estilos básicos para la notificación
+  notification.style.position = 'relative';
+  notification.style.width = '300px';
+  notification.style.padding = '15px';
+  notification.style.marginBottom = '10px';
+  notification.style.borderRadius = '5px';
+  notification.style.color = 'white';
+  notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+  notification.style.display = 'flex';
+  notification.style.alignItems = 'center';
+  notification.style.animation = 'slideIn 1s ease-out';
+  
+  // Icono según el tipo
+  const icon = document.createElement('span');
+  icon.style.marginRight = '10px';
+  icon.style.fontSize = '20px';
+  
+  if (type === 'error') {
+      notification.style.backgroundColor = '#ff4444';
+      icon.textContent = '❌';
+  } else if (type === 'success') {
+      notification.style.backgroundColor = '#00C851';
+      icon.textContent = '✅';
+  } else {
+      notification.style.backgroundColor = '#33b5e5';
+      icon.textContent = 'ℹ️';
   }
   
-  const quantity = parseInt(document.querySelector('.quantity-field input').value) || 1;
-  const selectedSize = document.querySelector(".ios-picker-item.selected")?.dataset.value;
-
-  let pricePerUnit = 0;
-
-  if (selectedSize) {
-    pricePerUnit = prices[selectedSize] || 0;
-  }
+  // Texto del mensaje
+  const text = document.createElement('span');
+  text.textContent = message;
   
-  // Calcular el precio total
-  const totalPrice = pricePerUnit * quantity;
-  
-  // Redondear
-  const roundedPrice = totalPrice.toFixed(2);
-  
-  // Actualizar el texto del precio total en el botón 
-  document.getElementById("total-price-button").innerText = `S/. ${roundedPrice}`;
-}
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelector('.quantity-field input').addEventListener('input', updateTotalPrice);
-
-  const sizePickerItems = document.querySelectorAll('#size-picker .ios-picker-item');
-
-  sizePickerItems.forEach(item => {
-    item.addEventListener('click', () => {
-      sizePickerItems.forEach(i => i.classList.remove('selected'));
-      if (!uploadedImageData) {
-        showNotification('Por favor, sube una imagen primero.', 'error');
-        return;
-      }
-      item.classList.add('selected');
-      updateTotalPrice(); 
-    });
+  // Botón de cerrar
+  const closeBtn = document.createElement('span');
+  closeBtn.textContent = '×';
+  closeBtn.style.marginLeft = 'auto';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.fontSize = '20px';
+  closeBtn.addEventListener('click', () => {
+      notification.style.animation = 'slideOut 1s ease-out';
+      setTimeout(() => notification.remove(), 300);
   });
+  
+  // Añadir elementos a la notificación
+  notification.appendChild(icon);
+  notification.appendChild(text);
+  notification.appendChild(closeBtn);
+  
+  // Añadir al contenedor
+  notificationContainer.appendChild(notification);
+  
+  // Eliminar después de 5 segundos
+  setTimeout(() => {
+      notification.style.animation = 'slideOut 1s ease-out';
+      setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
 
- 
-  updateTotalPrice();
-});
+// Añadir estilos de animación
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
